@@ -9,8 +9,8 @@ import com.kong.transmart.models.ExchangeRate
 class CurrencyRateViewModel: ViewModel() {
     private var _exchangeRate: MutableState<ExchangeRate> = mutableStateOf<ExchangeRate>(
         ExchangeRate(
-        Currency("CAD", "Canada", "$"),
-        Currency("KRW", "Korea", "\u20A9"),
+        Currency.CanadaCurrency,
+        Currency.KoreaCurrency,
         988.22
     ))
 
