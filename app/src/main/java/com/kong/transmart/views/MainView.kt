@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,14 +23,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.text.isDigitsOnly
 
 @Composable
@@ -54,7 +53,7 @@ fun CurrencyRateView() {
     ) {
         Text(
             text = "1 CAD = 998.89 KRW",
-            style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
         )
     }
 }
@@ -82,7 +81,7 @@ fun CurrencyCalculateView() {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(text = "CAD", style = TextStyle(fontSize = 20.sp))
+                Text(text = "CAD", style = MaterialTheme.typography.bodyLarge)
 
                 BasicTextField(
                     value = TextFieldValue(text = "$ $targetAmount", selection = TextRange("$ $targetAmount".length)),
@@ -92,7 +91,7 @@ fun CurrencyCalculateView() {
                             targetAmount = newTarget
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    textStyle = TextStyle(fontSize = 20.sp, textAlign = TextAlign.End),
+                    textStyle = MaterialTheme.typography.bodyLarge.copy(textAlign = TextAlign.End),
                     modifier = Modifier.width(IntrinsicSize.Min),
                 )
             }
@@ -110,10 +109,10 @@ fun CurrencyCalculateView() {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(text = "KRW", style = TextStyle(fontSize = 20.sp))
+                Text(text = "KRW", style = MaterialTheme.typography.bodyLarge)
                 Text(
                     text = "\u20A9 " + String.format("%,d", bestDstAmount.toInt()),
-                    style = TextStyle(fontSize = 20.sp, textAlign = TextAlign.End),
+                    style = MaterialTheme.typography.bodyLarge.copy(textAlign = TextAlign.End),
                 )
             }
         }
