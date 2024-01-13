@@ -1,5 +1,6 @@
 package com.kong.transmart.views
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -9,9 +10,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Card
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.kong.transmart.models.Bank
 import com.kong.transmart.viewmodels.CurrencyRateViewModel
 
 @Composable
@@ -44,6 +49,8 @@ fun MainView() {
         CurrencyRateView(viewModel)
         Spacer(modifier = Modifier.padding(bottom = 16.dp))
         CurrencyCalculateView(viewModel)
+        Spacer(modifier = Modifier.padding(bottom = 16.dp))
+        BankListView(viewModel)
     }
 }
 
@@ -141,9 +148,49 @@ fun CurrencyRateChartView() {
     
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun BankListView() {
-    
+fun BankListView(viewModel: CurrencyRateViewModel) {
+    Card (
+        modifier = Modifier.fillMaxWidth(),
+        backgroundColor = Color.White,
+        elevation = 8.dp
+    ) {
+        val banks = viewModel.getBankList()
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp),
+        ) {
+            stickyHeader {
+                BankRowView(name = "Name", rate = "Rate", fee = "Fee", total = "Total")
+            }
+
+            items(banks) {
+                    bank ->
+                Divider(modifier = Modifier.padding(8.dp))
+                BankItemView(bank = bank)
+            }
+        }
+    }
+
+}
+
+@Composable
+fun BankRowView(name: String, rate: String, fee: String, total: String) {
+    Row (
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Text(text = name, modifier = Modifier.weight(1f), textAlign = TextAlign.Center)
+        Text(text = rate, modifier = Modifier.weight(1f), textAlign = TextAlign.Center)
+        Text(text = fee, modifier = Modifier.weight(1f), textAlign = TextAlign.Center)
+        Text(text = total, modifier = Modifier.weight(1.5f), textAlign = TextAlign.Center)
+    }
+}
+
+@Composable
+fun BankItemView(bank: Bank) {
+    BankRowView(name = bank.name, rate = bank.exchangeRate.rate.toString(), fee = bank.fee.toString(), total = "2000,000.00")
 }
 
 

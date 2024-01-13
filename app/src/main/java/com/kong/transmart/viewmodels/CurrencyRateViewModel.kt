@@ -3,16 +3,23 @@ package com.kong.transmart.viewmodels
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.kong.transmart.models.Bank
 import com.kong.transmart.models.Currency
 import com.kong.transmart.models.ExchangeRate
+import com.kong.transmart.models.testBanks
 
 class CurrencyRateViewModel: ViewModel() {
-    private var _exchangeRate: MutableState<ExchangeRate> = mutableStateOf<ExchangeRate>(
+    private val _exchangeRate: MutableState<ExchangeRate> = mutableStateOf<ExchangeRate>(
         ExchangeRate(
         Currency.CanadaCurrency,
         Currency.KoreaCurrency,
         988.22
     ))
+    private val _bankList = mutableStateOf(testBanks)
+
+    fun getBankList(): List<Bank> {
+        return _bankList.value
+    }
 
     fun getSourceCurrency(): Currency {
         return _exchangeRate.value.from
