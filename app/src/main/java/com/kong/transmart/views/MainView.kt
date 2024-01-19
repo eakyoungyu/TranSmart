@@ -78,7 +78,7 @@ fun CurrencyCalculateView(viewModel: CurrencyRateViewModel) {
     val currencyRate = viewModel.getCurrencyRate()
 
     var sourceAmount by remember {
-        mutableStateOf("100")
+        mutableStateOf("0")
     }
     var bestTargetAmount: Double by remember {
         mutableStateOf(sourceAmount.toDouble() * currencyRate)
@@ -110,6 +110,7 @@ fun CurrencyCalculateView(viewModel: CurrencyRateViewModel) {
                         val newTarget = it.text.drop(2)
                         if (newTarget.isDigitsOnly()) {
                             sourceAmount = newTarget
+                            viewModel.setSourceAmount(sourceAmount.toIntOrNull() ?: 0)
                             bestTargetAmount = currencyRate * (sourceAmount.toDoubleOrNull() ?: 0.0)
                         }
                     },
@@ -169,7 +170,7 @@ fun BankListView(viewModel: CurrencyRateViewModel) {
             items(banks) {
                     bank ->
                 Divider(modifier = Modifier.padding(8.dp))
-                BankItemView(bank = bank)
+                BankItemView(bank = bank, viewModel.getSourceAmount())
             }
         }
     }
@@ -189,8 +190,14 @@ fun BankRowView(name: String, rate: String, fee: String, total: String) {
 }
 
 @Composable
-fun BankItemView(bank: Bank) {
-    BankRowView(name = bank.name, rate = bank.exchangeRate.rate.toString(), fee = bank.fee.toString(), total = "2000,000.00")
+fun BankItemView(bank: Bank, sourceAmount: Int) {
+    val total = (bank.exchangeRate * sourceAmount) + bank.fee
+    BankRowView(
+        name = bank.name,
+        rate = String.format("%,.2f", bank.exchangeRate),
+        fee = bank.fee.toString(),
+        total = String.format("%,.2f", total)
+    )
 }
 
 

@@ -46,6 +46,7 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "META-INF/DEPENDENCIES"
         }
     }
 }
@@ -64,6 +65,7 @@ dependencies {
     implementation("androidx.compose.material:material:$compose_version")
     implementation("androidx.compose.ui:ui-tooling-preview:$compose_version")
 
+    implementation("it.skrape:skrapeit:1.1.5")
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
