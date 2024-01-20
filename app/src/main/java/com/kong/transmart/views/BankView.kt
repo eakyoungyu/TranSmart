@@ -1,6 +1,8 @@
 package com.kong.transmart.views
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,19 +16,28 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Card
+import androidx.compose.material.DismissDirection
+import androidx.compose.material.DismissValue
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
@@ -35,7 +46,7 @@ import androidx.compose.ui.unit.dp
 import com.kong.transmart.models.Bank
 import com.kong.transmart.viewmodels.CurrencyRateViewModel
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun BankListView(viewModel: CurrencyRateViewModel) {
     Card (
@@ -57,10 +68,32 @@ fun BankListView(viewModel: CurrencyRateViewModel) {
                     BankRowView(name = "Name", rate = "Rate", fee = "Fee", total = "Total")
                 }
 
-                items(banks.value) {
+                items(banks.value, key={bank-> bank.id}) {
                         bank ->
                     Divider(modifier = Modifier.padding(8.dp))
-                    BankItemView(viewModel, bank = bank)
+
+                    val dismissState = rememberDismissState(
+                        confirmStateChange = {
+                            if (it == DismissValue.DismissedToStart) {
+                                viewModel.deleteBank(bank)
+                            }
+                            true
+                        }
+                    )
+
+                    SwipeToDismiss(
+                        state = dismissState,
+                        background = {
+                            Box(
+                                modifier = Modifier.fillMaxWidth(),
+                            )
+                        },
+                        directions = setOf(DismissDirection.EndToStart),
+                        dismissThresholds = {FractionalThreshold(0.5f)},
+                        dismissContent = {
+                            BankItemView(viewModel, bank = bank)
+                        }
+                    )
                 }
             }
             if (viewModel.isAddButtonClicked()) {
