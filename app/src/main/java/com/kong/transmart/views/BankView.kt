@@ -24,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -37,20 +38,12 @@ import com.kong.transmart.viewmodels.CurrencyRateViewModel
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BankListView(viewModel: CurrencyRateViewModel) {
-    val isAddButtonClicked = remember {
-        mutableStateOf(false)
-    }
-
-    val isEditButtonClicked = remember {
-        mutableStateOf(false)
-    }
-
     Card (
         modifier = Modifier.fillMaxWidth(),
         backgroundColor = Color.White,
         elevation = 8.dp
     ) {
-        val banks = viewModel.getBankList()
+        val banks = viewModel.getAllBanks.collectAsState(initial = listOf())
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.Top
@@ -64,20 +57,20 @@ fun BankListView(viewModel: CurrencyRateViewModel) {
                     BankRowView(name = "Name", rate = "Rate", fee = "Fee", total = "Total")
                 }
 
-                items(banks) {
+                items(banks.value) {
                         bank ->
                     Divider(modifier = Modifier.padding(8.dp))
-                    BankItemView(bank = bank, viewModel.getSourceAmount())
+                    BankItemView(viewModel, bank = bank)
                 }
             }
-            if (isAddButtonClicked.value) {
-                AddBankItemView(isAddButtonClicked)
+            if (viewModel.isAddButtonClicked()) {
+                AddBankItemView(viewModel)
             } else {
                 IconButton(
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight(),
-                    onClick = { isAddButtonClicked.value = true }
+                    onClick = { viewModel.onAddButtonClicked() }
                 ) {
                     Icon(imageVector = Icons.Default.Add, contentDescription = "Add a bank")
                 }
@@ -123,74 +116,78 @@ fun BankInputBasicTextField(textState: MutableState<String>, modifier: Modifier,
 }
 
 @Composable
-fun AddBankItemView(isAddButtonClicked: MutableState<Boolean>) {
-    val name = remember {
-        mutableStateOf("")
-    }
-    val rate = remember {
-        mutableStateOf("")
-    }
-    val fee = remember {
-        mutableStateOf("")
-    }
+fun AddBankItemView(viewModel: CurrencyRateViewModel) {
     Row (
         modifier = Modifier.fillMaxWidth(),
 
         ) {
-        BankInputBasicTextField(name, Modifier.weight(1f), KeyboardType.Text, "name")
-        BankInputBasicTextField(rate, Modifier.weight(1f), KeyboardType.Number, "rate")
-        BankInputBasicTextField(fee, Modifier.weight(1f), KeyboardType.Number, "fee")
+        BankInputBasicTextField(viewModel.bankName, Modifier.weight(1f), KeyboardType.Text, "name")
+        BankInputBasicTextField(viewModel.bankRate, Modifier.weight(1f), KeyboardType.Number, "rate")
+        BankInputBasicTextField(viewModel.bankFee, Modifier.weight(1f), KeyboardType.Number, "fee")
         Icon(
             imageVector = Icons.Default.Done,
             contentDescription = "Save bank",
             modifier = Modifier
                 .weight(1.5f)
                 .clickable {
-                    isAddButtonClicked.value = false
+                    viewModel.onAddSaveButtonClicked()
+                    if (viewModel.bankName.value.isNotEmpty() && viewModel.bankRate.value.isNotEmpty()) {
+                        viewModel.addBank(
+                            Bank(
+                                name = viewModel.bankName.value,
+                                fee = viewModel.bankFee.value.toDoubleOrNull() ?: 0.0,
+                                exchangeRate = viewModel.bankRate.value.toDoubleOrNull() ?: 0.0
+                            )
+                        )
+                    }
+                    viewModel.clearBankInfo()
                 })
+
     }
 }
 
 @Composable
-fun EditBankItemView(bank: Bank, isEditButtonClicked: MutableState<Boolean>) {
-    val name = remember {
-        mutableStateOf(bank.name)
-    }
-    val rate = remember {
-        mutableStateOf(bank.exchangeRate.toString())
-    }
-    val fee = remember {
-        mutableStateOf(bank.fee.toString())
-    }
+fun EditBankItemView(viewModel: CurrencyRateViewModel, bank: Bank) {
+    viewModel.bankName.value = bank.name
+    viewModel.bankFee.value = bank.fee.toString()
+    viewModel.bankRate.value = bank.exchangeRate.toString()
+
     Row (
         modifier = Modifier.fillMaxWidth(),
 
         ) {
-        BankInputBasicTextField(name, Modifier.weight(1f), KeyboardType.Text, "name")
-        BankInputBasicTextField(rate, Modifier.weight(1f), KeyboardType.Number, "rate")
-        BankInputBasicTextField(fee, Modifier.weight(1f), KeyboardType.Number, "fee")
+        BankInputBasicTextField(viewModel.bankName, Modifier.weight(1f), KeyboardType.Text, "name")
+        BankInputBasicTextField(viewModel.bankRate, Modifier.weight(1f), KeyboardType.Number, "rate")
+        BankInputBasicTextField(viewModel.bankFee, Modifier.weight(1f), KeyboardType.Number, "fee")
         Icon(
             imageVector = Icons.Default.Done,
             contentDescription = "Save bank",
             modifier = Modifier
                 .weight(1.5f)
                 .clickable {
-                    isEditButtonClicked.value = false
+                    viewModel.onEditSaveButtonClicked()
+                    viewModel.updateBank(
+                        Bank(
+                            id = bank.id,
+                            name = viewModel.bankName.value,
+                            fee = viewModel.bankFee.value.toDoubleOrNull() ?: 0.0,
+                            exchangeRate = viewModel.bankRate.value.toDoubleOrNull() ?: 0.0
+                        )
+                    )
+                    viewModel.clearBankInfo()
                 })
     }
 }
 
 @Composable
-fun BankItemView(bank: Bank, sourceAmount: Int) {
-    val total = (bank.exchangeRate * sourceAmount) + bank.fee
-    val isEditButtonClicked = remember {
-        mutableStateOf(false)
-    }
+fun BankItemView(viewModel: CurrencyRateViewModel, bank: Bank) {
+    val total = (bank.exchangeRate * viewModel.getSourceAmount()) + bank.fee
+
     Box(modifier = Modifier.clickable {
-        isEditButtonClicked.value = true
+        viewModel.onEditButtonClicked(bank.id)
     }) {
-        if (isEditButtonClicked.value) {
-            EditBankItemView(bank, isEditButtonClicked)
+        if (viewModel.isEditButtonClicked(bank.id)) {
+            EditBankItemView(viewModel, bank)
         } else {
             BankRowView(
                 name = bank.name,
