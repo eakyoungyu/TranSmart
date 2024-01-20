@@ -10,6 +10,7 @@ import com.kong.transmart.models.Currency
 import com.kong.transmart.models.ExchangeRate
 import com.kong.transmart.network.CurrencyRateScraper
 import kotlinx.coroutines.launch
+import kotlin.math.round
 
 class CurrencyRateViewModel: ViewModel() {
     private val KAKAO_BANK = "Kakao Bank"
@@ -62,7 +63,8 @@ class CurrencyRateViewModel: ViewModel() {
                 if (bank.name == KAKAO_BANK) {
                     _bankList.value = _bankList.value.toMutableList().apply {
                         val exchangeFee = (currentCurrencyRate.transferRate - currentCurrencyRate.currencyRate) * 0.5
-                        set(indexOf(bank), bank.copy(exchangeRate = currentCurrencyRate.currencyRate + exchangeFee))
+                        val exchangeRate = currentCurrencyRate.currencyRate + exchangeFee
+                        set(indexOf(bank), bank.copy(exchangeRate = round(exchangeRate * 100) / 100))
                         Log.d("Y2K2", "Transfer: ${currentCurrencyRate.transferRate} Calculated: ${currentCurrencyRate.currencyRate + exchangeFee}")
                     }
                 }

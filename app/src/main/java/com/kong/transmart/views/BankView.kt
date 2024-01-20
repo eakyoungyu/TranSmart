@@ -3,6 +3,7 @@ package com.kong.transmart.views
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,7 +37,11 @@ import com.kong.transmart.viewmodels.CurrencyRateViewModel
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BankListView(viewModel: CurrencyRateViewModel) {
-    var isAddButtonClicked = remember {
+    val isAddButtonClicked = remember {
+        mutableStateOf(false)
+    }
+
+    val isEditButtonClicked = remember {
         mutableStateOf(false)
     }
 
@@ -138,19 +143,61 @@ fun AddBankItemView(isAddButtonClicked: MutableState<Boolean>) {
         Icon(
             imageVector = Icons.Default.Done,
             contentDescription = "Save bank",
-            modifier = Modifier.weight(1.5f).clickable {
-                isAddButtonClicked.value = false
-            })
+            modifier = Modifier
+                .weight(1.5f)
+                .clickable {
+                    isAddButtonClicked.value = false
+                })
+    }
+}
+
+@Composable
+fun EditBankItemView(bank: Bank, isEditButtonClicked: MutableState<Boolean>) {
+    val name = remember {
+        mutableStateOf(bank.name)
+    }
+    val rate = remember {
+        mutableStateOf(bank.exchangeRate.toString())
+    }
+    val fee = remember {
+        mutableStateOf(bank.fee.toString())
+    }
+    Row (
+        modifier = Modifier.fillMaxWidth(),
+
+        ) {
+        BankInputBasicTextField(name, Modifier.weight(1f), KeyboardType.Text, "name")
+        BankInputBasicTextField(rate, Modifier.weight(1f), KeyboardType.Number, "rate")
+        BankInputBasicTextField(fee, Modifier.weight(1f), KeyboardType.Number, "fee")
+        Icon(
+            imageVector = Icons.Default.Done,
+            contentDescription = "Save bank",
+            modifier = Modifier
+                .weight(1.5f)
+                .clickable {
+                    isEditButtonClicked.value = false
+                })
     }
 }
 
 @Composable
 fun BankItemView(bank: Bank, sourceAmount: Int) {
     val total = (bank.exchangeRate * sourceAmount) + bank.fee
-    BankRowView(
-        name = bank.name,
-        rate = String.format("%,.2f", bank.exchangeRate),
-        fee = bank.fee.toString(),
-        total = String.format("%,.2f", total)
-    )
+    val isEditButtonClicked = remember {
+        mutableStateOf(false)
+    }
+    Box(modifier = Modifier.clickable {
+        isEditButtonClicked.value = true
+    }) {
+        if (isEditButtonClicked.value) {
+            EditBankItemView(bank, isEditButtonClicked)
+        } else {
+            BankRowView(
+                name = bank.name,
+                rate = String.format("%,.2f", bank.exchangeRate),
+                fee = bank.fee.toString(),
+                total = String.format("%,.2f", total)
+            )
+        }
+    }
 }
