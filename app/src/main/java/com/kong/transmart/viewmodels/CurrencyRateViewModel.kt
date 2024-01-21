@@ -27,6 +27,7 @@ class CurrencyRateViewModel(
         Currency.KoreaCurrency,
         0.0
     ))
+    private val _updatedTime: MutableState<String> = mutableStateOf("")
 
     private val _sourceAmount = mutableStateOf(0)
     val bankName = mutableStateOf("")
@@ -35,7 +36,7 @@ class CurrencyRateViewModel(
 
     private val _isAddButtonClicked = mutableStateOf(false)
     private val _isEditButtonClicked = mutableStateOf(false)
-    val selectedBankId = mutableStateOf(-1L)
+    private val selectedBankId = mutableStateOf(-1L)
 
     lateinit var getAllBanks: Flow<List<Bank>>
     init {
@@ -127,10 +128,15 @@ class CurrencyRateViewModel(
         return _exchangeRate.value.rate
     }
 
+    fun getLastUpdatedTime(): String {
+        return _updatedTime.value
+    }
+
     private suspend fun fetchFromWeb() {
         val scraper = CurrencyRateScraper()
         val currentCurrencyRate = scraper.fetchCurrencyRate()
         _exchangeRate.value = _exchangeRate.value.copy(rate = currentCurrencyRate.currencyRate)
+        _updatedTime.value = currentCurrencyRate.time
 
         val exchangeFee = (currentCurrencyRate.transferRate - currentCurrencyRate.currencyRate) * 0.5
         var exchangeRate = currentCurrencyRate.currencyRate + exchangeFee
@@ -138,5 +144,6 @@ class CurrencyRateViewModel(
 
         updateBankRateByName(KAKAO_BANK, exchangeRate)
         Log.d("Y2K2", "Transfer: ${currentCurrencyRate.transferRate} Calculated: ${currentCurrencyRate.currencyRate + exchangeFee}")
+
     }
 }

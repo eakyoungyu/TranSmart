@@ -3,23 +3,15 @@ package com.kong.transmart.network
 import android.util.Log
 import it.skrape.core.htmlDocument
 import it.skrape.fetcher.HttpFetcher
-import it.skrape.fetcher.Result
-import it.skrape.fetcher.extract
 import it.skrape.fetcher.response
 import it.skrape.fetcher.skrape
-import it.skrape.selects.html5.div
-import it.skrape.selects.html5.h3
-import it.skrape.selects.html5.img
-import it.skrape.selects.html5.li
-import it.skrape.selects.html5.ol
 import it.skrape.selects.html5.table
 import it.skrape.selects.html5.tbody
-import it.skrape.selects.html5.td
-import it.skrape.selects.html5.tr
-import it.skrape.selects.text
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.text.NumberFormat
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 data class CurrentCurrencyRate(
@@ -29,7 +21,8 @@ data class CurrentCurrencyRate(
 
 data class ParsedCurrentCurrencyRate(
     val currencyRate: Double,
-    val transferRate: Double
+    val transferRate: Double,
+    val time: String
 )
 class CurrencyRateScraper {
     private val naverFinanceURL = "https://finance.naver.com/marketindex/exchangeDetail.naver?marketindexCd=FX_CADKRW"
@@ -39,10 +32,23 @@ class CurrencyRateScraper {
         Log.i("Y2K2", "Start fetching")
 
         val currentCurrencyRate = fetchCurrentCurrencyRate(naverFinanceURL)
-        val result = ParsedCurrentCurrencyRate(stringToDouble(currentCurrencyRate.currencyRate), stringToDouble(currentCurrencyRate.transferRate))
-        Log.i("Y2K2", "Result: ${result.currencyRate} ${result.transferRate}")
+
+        val result = ParsedCurrentCurrencyRate(
+            stringToDouble(currentCurrencyRate.currencyRate),
+            stringToDouble(currentCurrencyRate.transferRate),
+            getCurrentTime()
+        )
+
+        Log.i("Y2K2", "Result: ${result.currencyRate} ${result.transferRate} ${result.time}")
 
         return result
+    }
+
+    private fun getCurrentTime(): String {
+        val currentDate = Date(System.currentTimeMillis())
+        val simpleDateFormat = SimpleDateFormat("dd MMM yyyy HH:mm:ss")
+
+        return simpleDateFormat.format(currentDate)
     }
 
     private fun stringToDouble(string: String): Double {
