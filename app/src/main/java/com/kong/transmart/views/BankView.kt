@@ -212,7 +212,8 @@ fun BankItemView(viewModel: CurrencyRateViewModel, bank: Bank) {
     val total = (bank.exchangeRate * viewModel.getSourceAmount()) + bank.fee
 
     Box(modifier = Modifier.clickable {
-        viewModel.onEditButtonClicked(bank.id)
+        if (bank.removable)
+            viewModel.onEditButtonClicked(bank.id)
     }) {
         if (viewModel.isEditButtonClicked(bank.id)) {
             EditBankItemView(viewModel, bank)
