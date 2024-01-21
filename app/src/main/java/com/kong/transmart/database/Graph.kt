@@ -11,6 +11,7 @@ object Graph {
     }
 
     fun provide(context: Context) {
-        database = Room.databaseBuilder(context, BankDatabase::class.java, "bank.db").build()
+        database = Room.databaseBuilder(context, BankDatabase::class.java, "bank.db")
+            .createFromAsset("default-bank.db").build()
     }
 }
