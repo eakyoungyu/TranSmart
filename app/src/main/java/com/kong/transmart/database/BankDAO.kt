@@ -20,6 +20,9 @@ abstract class BankDAO {
     @Query("Select * from `bank-table` where id=:id")
     abstract fun getBankById(id: Long): Flow<Bank>
 
+    @Query("UPDATE `bank-table` SET `bank-rate` = :newExchangeRate WHERE `bank-name` = :bankName")
+    abstract suspend fun updateBankRateByName(bankName: String, newExchangeRate: Double)
+
     @Update
     abstract suspend fun updateBank(bankEntity: Bank)
 

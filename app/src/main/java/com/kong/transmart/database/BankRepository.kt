@@ -14,6 +14,10 @@ class BankRepository(private val bankDao: BankDAO){
         return bankDao.getBankById(id)
     }
 
+    suspend fun updateBankRateByName(name: String, rate: Double) {
+        bankDao.updateBankRateByName(name, rate)
+    }
+
     suspend fun updateBank(bank: Bank) {
         bankDao.updateBank(bank)
     }

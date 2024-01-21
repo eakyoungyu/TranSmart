@@ -41,6 +41,8 @@ class CurrencyRateViewModel(
     init {
         viewModelScope.launch(Dispatchers.IO) {
             getAllBanks = bankRepository.getBanks()
+        }
+        viewModelScope.launch {
             fetchFromWeb()
         }
     }
@@ -59,6 +61,12 @@ class CurrencyRateViewModel(
 
     fun getBankById(id: Long): Flow<Bank> {
         return bankRepository.getBankById(id)
+    }
+
+    fun updateBankRateByName(name: String, rate: Double) {
+        viewModelScope.launch(Dispatchers.IO) {
+            bankRepository.updateBankRateByName(name, rate)
+        }
     }
 
     fun deleteBank(bank: Bank) {
@@ -123,17 +131,12 @@ class CurrencyRateViewModel(
         val scraper = CurrencyRateScraper()
         val currentCurrencyRate = scraper.fetchCurrencyRate()
         _exchangeRate.value = _exchangeRate.value.copy(rate = currentCurrencyRate.currencyRate)
-        getAllBanks.collect { banks ->
-            banks.forEach { bank ->
-                if (bank.name == KAKAO_BANK) {
-                    val exchangeFee = (currentCurrencyRate.transferRate - currentCurrencyRate.currencyRate) * 0.5
-                    var exchangeRate = currentCurrencyRate.currencyRate + exchangeFee
-                    exchangeRate = round(exchangeRate * 100) / 100
-                    updateBank(bank.copy(exchangeRate = exchangeRate))
-                    Log.d("Y2K2", "Transfer: ${currentCurrencyRate.transferRate} Calculated: ${currentCurrencyRate.currencyRate + exchangeFee}")
-                }
-            }
-        }
 
+        val exchangeFee = (currentCurrencyRate.transferRate - currentCurrencyRate.currencyRate) * 0.5
+        var exchangeRate = currentCurrencyRate.currencyRate + exchangeFee
+        exchangeRate = round(exchangeRate * 100) / 100
+
+        updateBankRateByName(KAKAO_BANK, exchangeRate)
+        Log.d("Y2K2", "Transfer: ${currentCurrencyRate.transferRate} Calculated: ${currentCurrencyRate.currencyRate + exchangeFee}")
     }
 }
