@@ -97,7 +97,6 @@ class CurrencyRateViewModel(
         bankName.value = ""
         bankFee.value = ""
         bankRate.value = ""
-        selectedBankId.value = -1
     }
 
     fun getSourceAmount(): Int {

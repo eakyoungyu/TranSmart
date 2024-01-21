@@ -103,7 +103,10 @@ fun BankListView(viewModel: CurrencyRateViewModel) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight(),
-                    onClick = { viewModel.onAddButtonClicked() }
+                    onClick = {
+                        viewModel.onAddButtonClicked()
+                        viewModel.clearBankInfo()
+                    }
                 ) {
                     Icon(imageVector = Icons.Default.Add, contentDescription = "Add a bank")
                 }
@@ -152,7 +155,6 @@ fun BankInputBasicTextField(textState: MutableState<String>, modifier: Modifier,
 fun AddBankItemView(viewModel: CurrencyRateViewModel) {
     Row (
         modifier = Modifier.fillMaxWidth(),
-
         ) {
         BankInputBasicTextField(viewModel.bankName, Modifier.weight(1.5f), KeyboardType.Text, "name")
         BankInputBasicTextField(viewModel.bankRate, Modifier.weight(1f), KeyboardType.Number, "rate")
@@ -189,7 +191,7 @@ fun EditBankItemView(viewModel: CurrencyRateViewModel, bank: Bank) {
         modifier = Modifier.fillMaxWidth(),
 
         ) {
-        BankInputBasicTextField(viewModel.bankName, Modifier.weight(1f), KeyboardType.Text, "name")
+        BankInputBasicTextField(viewModel.bankName, Modifier.weight(1.5f), KeyboardType.Text, "name")
         BankInputBasicTextField(viewModel.bankRate, Modifier.weight(1f), KeyboardType.Number, "rate")
         BankInputBasicTextField(viewModel.bankFee, Modifier.weight(1f), KeyboardType.Number, "fee")
         Icon(
