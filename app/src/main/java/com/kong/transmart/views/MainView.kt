@@ -21,7 +21,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -88,7 +87,7 @@ fun CurrencyCalculateView(viewModel: CurrencyRateViewModel) {
 
         Card(
             modifier = Modifier.fillMaxWidth(),
-            backgroundColor = Color.White,
+            backgroundColor = MaterialTheme.colorScheme.primary,
             elevation = 8.dp
         ) {
             Row (
@@ -112,7 +111,7 @@ fun CurrencyCalculateView(viewModel: CurrencyRateViewModel) {
                         }
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    textStyle = MaterialTheme.typography.bodyLarge.copy(textAlign = TextAlign.End),
+                    textStyle = MaterialTheme.typography.bodyLarge.copy(textAlign = TextAlign.End, color = MaterialTheme.colorScheme.onPrimary),
                     modifier = Modifier.width(IntrinsicSize.Min),
                 )
             }
@@ -122,7 +121,7 @@ fun CurrencyCalculateView(viewModel: CurrencyRateViewModel) {
 
         Card(
             modifier = Modifier.fillMaxWidth(),
-            backgroundColor = Color.White,
+            backgroundColor = MaterialTheme.colorScheme.primary,
             elevation = 8.dp
         ) {
             Row (
