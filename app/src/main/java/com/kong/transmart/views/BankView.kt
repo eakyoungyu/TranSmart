@@ -125,7 +125,7 @@ fun BankRowView(name: String, rate: String, fee: String, total: String) {
     Row (
         modifier = Modifier.fillMaxWidth(),
     ) {
-        BankInfoText(text = name, modifier = Modifier.weight(1f))
+        BankInfoText(text = name, modifier = Modifier.weight(1.5f))
         BankInfoText(text = rate, modifier = Modifier.weight(1f))
         BankInfoText(text = fee, modifier = Modifier.weight(1f))
         BankInfoText(text = total, modifier = Modifier.weight(1.5f))
@@ -154,7 +154,7 @@ fun AddBankItemView(viewModel: CurrencyRateViewModel) {
         modifier = Modifier.fillMaxWidth(),
 
         ) {
-        BankInputBasicTextField(viewModel.bankName, Modifier.weight(1f), KeyboardType.Text, "name")
+        BankInputBasicTextField(viewModel.bankName, Modifier.weight(1.5f), KeyboardType.Text, "name")
         BankInputBasicTextField(viewModel.bankRate, Modifier.weight(1f), KeyboardType.Number, "rate")
         BankInputBasicTextField(viewModel.bankFee, Modifier.weight(1f), KeyboardType.Number, "fee")
         Icon(
