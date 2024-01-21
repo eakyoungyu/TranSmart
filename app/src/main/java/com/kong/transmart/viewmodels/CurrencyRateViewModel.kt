@@ -27,8 +27,6 @@ class CurrencyRateViewModel(
         Currency.KoreaCurrency,
         0.0
     ))
-//    private val _bankList = mutableStateOf(testBanks)
-//    private val _bankList = mutableStateOf(mutableListOf(Bank(0, KAKAO_BANK, 8000.0, 0.0)))
 
     private val _sourceAmount = mutableStateOf(0)
     val bankName = mutableStateOf("")
@@ -41,9 +39,9 @@ class CurrencyRateViewModel(
 
     lateinit var getAllBanks: Flow<List<Bank>>
     init {
-//        fetchFromWeb()
         viewModelScope.launch(Dispatchers.IO) {
             getAllBanks = bankRepository.getBanks()
+            fetchFromWeb()
         }
     }
 
@@ -110,11 +108,6 @@ class CurrencyRateViewModel(
         _sourceAmount.value = amount
     }
 
-
-//    fun getBankList(): List<Bank> {
-//        return _bankList.value
-//    }
-
     fun getSourceCurrency(): Currency {
         return _exchangeRate.value.from
     }
@@ -127,22 +120,21 @@ class CurrencyRateViewModel(
         return _exchangeRate.value.rate
     }
 
-//    private fun fetchFromWeb() {
-//        viewModelScope.launch {
-//            val scraper = CurrencyRateScraper()
-//            val currentCurrencyRate = scraper.fetchCurrencyRate()
-//            _exchangeRate.value = _exchangeRate.value.copy(rate = currentCurrencyRate.currencyRate)
-//            _bankList.value.forEach {
-//                bank ->
-//                if (bank.name == KAKAO_BANK) {
-//                    _bankList.value = _bankList.value.toMutableList().apply {
-//                        val exchangeFee = (currentCurrencyRate.transferRate - currentCurrencyRate.currencyRate) * 0.5
-//                        val exchangeRate = currentCurrencyRate.currencyRate + exchangeFee
-//                        set(indexOf(bank), bank.copy(exchangeRate = round(exchangeRate * 100) / 100))
-//                        Log.d("Y2K2", "Transfer: ${currentCurrencyRate.transferRate} Calculated: ${currentCurrencyRate.currencyRate + exchangeFee}")
-//                    }
-//                }
-//            }
-//        }
-//    }
+    private suspend fun fetchFromWeb() {
+        val scraper = CurrencyRateScraper()
+        val currentCurrencyRate = scraper.fetchCurrencyRate()
+        _exchangeRate.value = _exchangeRate.value.copy(rate = currentCurrencyRate.currencyRate)
+        getAllBanks.collect { banks ->
+            banks.forEach { bank ->
+                if (bank.name == KAKAO_BANK) {
+                    val exchangeFee = (currentCurrencyRate.transferRate - currentCurrencyRate.currencyRate) * 0.5
+                    var exchangeRate = currentCurrencyRate.currencyRate + exchangeFee
+                    exchangeRate = round(exchangeRate * 100) / 100
+                    updateBank(bank.copy(exchangeRate = exchangeRate))
+                    Log.d("Y2K2", "Transfer: ${currentCurrencyRate.transferRate} Calculated: ${currentCurrencyRate.currencyRate + exchangeFee}")
+                }
+            }
+        }
+
+    }
 }

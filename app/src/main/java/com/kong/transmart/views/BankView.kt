@@ -74,10 +74,10 @@ fun BankListView(viewModel: CurrencyRateViewModel) {
 
                     val dismissState = rememberDismissState(
                         confirmStateChange = {
-                            if (it == DismissValue.DismissedToStart) {
+                            if (bank.removable && it == DismissValue.DismissedToStart) {
                                 viewModel.deleteBank(bank)
                             }
-                            true
+                            bank.removable
                         }
                     )
 

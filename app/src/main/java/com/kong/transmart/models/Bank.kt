@@ -14,10 +14,6 @@ data class Bank (
     var fee: Double = 0.0,
     @ColumnInfo(name="bank-rate")
     var exchangeRate: Double = 0.0,
+    @ColumnInfo(name="bank-removable")
+    val removable: Boolean = true
 )
-
-//val testBanks = listOf<Bank>(
-//    Bank("Kakao Bank", 8000.0, 999.1),
-//    Bank("KB", 2000.0, 999.2),
-//    Bank("Moin", 5000.0, 999.3)
-//)
