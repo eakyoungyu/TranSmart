@@ -33,9 +33,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.kong.transmart.R
 import com.kong.transmart.models.Bank
 import com.kong.transmart.viewmodels.CurrencyRateViewModel
 
@@ -58,7 +60,12 @@ fun BankListView(viewModel: CurrencyRateViewModel) {
                     .padding(vertical = 16.dp)
             ) {
                 stickyHeader {
-                    BankRowView(name = "Name", rate = "Rate", fee = "Fee", total = "Total")
+                    BankRowView(
+                        name = stringResource(id = R.string.label_bank_name),
+                        rate = stringResource(id = R.string.label_bank_rate),
+                        fee = stringResource(id = R.string.label_bank_fee),
+                        total = stringResource(id = R.string.label_bank_total)
+                    )
                 }
 
                 items(banks.value, key={bank-> bank.id}) {
