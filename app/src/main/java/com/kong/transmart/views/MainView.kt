@@ -12,12 +12,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Card
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,15 +36,34 @@ import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kong.transmart.viewmodels.CurrencyRateViewModel
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MainView() {
+    val viewModel:CurrencyRateViewModel = viewModel()
+
+    val refreshScope = rememberCoroutineScope()
+    var refreshing by remember { mutableStateOf(false) }
+    fun refresh() = refreshScope.launch {
+        refreshing = true
+        viewModel.fetchFromWeb()
+        refreshing = false
+    }
+    val state = rememberPullRefreshState(refreshing, ::refresh)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
+            .pullRefresh(state)
     ) {
-        val viewModel:CurrencyRateViewModel = viewModel()
+        PullRefreshIndicator(
+            refreshing, 
+            state, 
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+        )
+
         CurrentCurrencyRateView(viewModel)
         Spacer(modifier = Modifier.padding(bottom = 16.dp))
         CurrencyCalculateView(viewModel)
@@ -63,6 +87,10 @@ fun CurrentCurrencyRateView(viewModel: CurrencyRateViewModel) {
         Text(
             text = "1 $sourceCode = $currencyRate $targetCode",
             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+        )
+        Text(
+            text = "Last updated: ${viewModel.getLastUpdatedTime()}",
+            style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSecondary)
         )
     }
 }
