@@ -26,7 +26,7 @@ data class ParsedCurrentCurrencyRate(
 )
 class CurrencyRateScraper {
     private val naverFinanceURL = "https://finance.naver.com/marketindex/exchangeDetail.naver?marketindexCd=FX_CADKRW"
-    private val moinUrl = "https://www.themoin.com/currency/info"
+    private val moinUrl = "https://www.themoin.com/currency/info/cad"
     private val wirebarleyUrl = "https://www.wirebarley.com/"
     suspend fun fetchCurrencyRate(): ParsedCurrentCurrencyRate{
         Log.i("Y2K2", "Start fetching")
@@ -40,7 +40,6 @@ class CurrencyRateScraper {
         )
 
         Log.i("Y2K2", "Result: ${result.currencyRate} ${result.transferRate} ${result.time}")
-
         return result
     }
 
@@ -59,11 +58,15 @@ class CurrencyRateScraper {
     private suspend fun fetchCurrentCurrencyRate(targetUrl: String): CurrentCurrencyRate =
         withContext(Dispatchers.IO) {
             val currencyRate: CurrentCurrencyRate = CurrentCurrencyRate("0.0", "0.0")
+            Log.d("Y2K2", "fetchCurrentCurrencyRate - E")
+
             skrape(HttpFetcher) {
                 request {
                     url = targetUrl
+                    timeout = 10000
                 }
                 response {
+                    Log.d("Y2K2", "${responseStatus.code} ${responseStatus.message}")
                     htmlDocument {
                         table {
                             withClass = "tbl_calculator"

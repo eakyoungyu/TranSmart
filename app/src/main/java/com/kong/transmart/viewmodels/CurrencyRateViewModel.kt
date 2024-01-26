@@ -133,6 +133,7 @@ class CurrencyRateViewModel(
     }
 
     suspend fun fetchFromWeb() {
+        Log.d("Y2K2", "fetchFromWeb - E")
         val scraper = CurrencyRateScraper()
         val currentCurrencyRate = scraper.fetchCurrencyRate()
         _exchangeRate.value = _exchangeRate.value.copy(rate = currentCurrencyRate.currencyRate)
