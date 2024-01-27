@@ -14,7 +14,6 @@ import com.kong.transmart.network.CurrencyRateScraper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import kotlin.math.round
 
 class CurrencyRateViewModel(
     private val bankRepository: BankRepository = Graph.bankRepository
@@ -25,9 +24,9 @@ class CurrencyRateViewModel(
         ExchangeRate(
         Currency.CanadaCurrency,
         Currency.KoreaCurrency,
-        0.0
+        0.0,
+            ""
     ))
-    private val _updatedTime: MutableState<String> = mutableStateOf("")
 
     private val _sourceAmount = mutableStateOf(0)
     val bankName = mutableStateOf("")
@@ -43,7 +42,7 @@ class CurrencyRateViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             getAllBanks = bankRepository.getBanks()
         }
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             fetchFromWeb()
         }
     }
@@ -129,22 +128,18 @@ class CurrencyRateViewModel(
     }
 
     fun getLastUpdatedTime(): String {
-        return _updatedTime.value
+        return _exchangeRate.value.updatedTime
     }
 
     suspend fun fetchFromWeb() {
         Log.d("Y2K2", "fetchFromWeb - E")
         val scraper = CurrencyRateScraper()
         val currentCurrencyRate = scraper.fetchCurrencyRate()
-        _exchangeRate.value = _exchangeRate.value.copy(rate = currentCurrencyRate.currencyRate)
-        _updatedTime.value = currentCurrencyRate.time
+        _exchangeRate.value = _exchangeRate.value.copy(
+            rate = currentCurrencyRate.currencyRate,
+            updatedTime = currentCurrencyRate.time
+        )
 
-        val exchangeFee = (currentCurrencyRate.transferRate - currentCurrencyRate.currencyRate) * 0.5
-        var exchangeRate = currentCurrencyRate.currencyRate + exchangeFee
-        exchangeRate = round(exchangeRate * 100) / 100
-
-        updateBankRateByName(KAKAO_BANK, exchangeRate)
-        Log.d("Y2K2", "Transfer: ${currentCurrencyRate.transferRate} Calculated: ${currentCurrencyRate.currencyRate + exchangeFee}")
-
+        updateBankRateByName(KAKAO_BANK, currentCurrencyRate.preferentialExchangeRate)
     }
 }

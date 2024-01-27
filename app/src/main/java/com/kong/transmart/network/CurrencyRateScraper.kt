@@ -13,6 +13,7 @@ import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.math.round
 
 data class CurrentCurrencyRate(
     var currencyRate: String,
@@ -21,7 +22,7 @@ data class CurrentCurrencyRate(
 
 data class ParsedCurrentCurrencyRate(
     val currencyRate: Double,
-    val transferRate: Double,
+    val preferentialExchangeRate: Double,
     val time: String
 )
 class CurrencyRateScraper {
@@ -32,15 +33,7 @@ class CurrencyRateScraper {
         Log.i("Y2K2", "Start fetching")
 
         val currentCurrencyRate = fetchCurrentCurrencyRate(naverFinanceURL)
-
-        val result = ParsedCurrentCurrencyRate(
-            stringToDouble(currentCurrencyRate.currencyRate),
-            stringToDouble(currentCurrencyRate.transferRate),
-            getCurrentTime()
-        )
-
-        Log.i("Y2K2", "Result: ${result.currencyRate} ${result.transferRate} ${result.time}")
-        return result
+        return parseCurrencyRate(currentCurrencyRate)
     }
 
     private fun getCurrentTime(): String {
@@ -53,6 +46,19 @@ class CurrencyRateScraper {
     private fun stringToDouble(string: String): Double {
         val numberFormat = NumberFormat.getInstance(Locale.US)
         return numberFormat.parse(string)?.toDouble() ?: 0.0
+    }
+
+    private fun parseCurrencyRate(rate: CurrentCurrencyRate): ParsedCurrentCurrencyRate {
+        val currencyRate = stringToDouble(rate.currencyRate)
+        val transferRate = stringToDouble(rate.transferRate)
+
+        val exchangeFee = (transferRate - currencyRate) * 0.5
+        var exchangeRate = currencyRate + exchangeFee
+        exchangeRate = round(exchangeRate * 100) / 100
+
+        Log.d("Y2K2", "Transfer: $transferRate Calculated: $exchangeRate")
+
+        return ParsedCurrentCurrencyRate(currencyRate, exchangeRate, getCurrentTime())
     }
 
     private suspend fun fetchCurrentCurrencyRate(targetUrl: String): CurrentCurrencyRate =
