@@ -12,6 +12,7 @@ import com.kong.transmart.models.Currency
 import com.kong.transmart.models.ExchangeRate
 import com.kong.transmart.network.CurrencyRateScraper
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
@@ -40,10 +41,9 @@ class CurrencyRateViewModel(
     lateinit var getAllBanks: Flow<List<Bank>>
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            getAllBanks = bankRepository.getBanks()
-        }
-        viewModelScope.launch(Dispatchers.IO) {
-            fetchFromWeb()
+            async { fetchFromWeb()}
+            val banks = async {bankRepository.getBanks()}
+            getAllBanks = banks.await()
         }
     }
 
