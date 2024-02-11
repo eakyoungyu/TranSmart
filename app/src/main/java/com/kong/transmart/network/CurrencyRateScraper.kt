@@ -26,14 +26,35 @@ data class ParsedCurrentCurrencyRate(
     val time: String
 )
 class CurrencyRateScraper {
+    private val TAG = CurrencyRateScraper::class.simpleName
     private val naverFinanceURL = "https://finance.naver.com/marketindex/exchangeDetail.naver?marketindexCd=FX_CADKRW"
     private val moinUrl = "https://www.themoin.com/currency/info/cad"
     private val wirebarleyUrl = "https://www.wirebarley.com/"
     suspend fun fetchCurrencyRate(): ParsedCurrentCurrencyRate{
-        Log.i("Y2K2", "Start fetching")
+        Log.i(TAG, "Start fetching")
 
-        val currentCurrencyRate = fetchCurrentCurrencyRate(naverFinanceURL)
-        return parseCurrencyRate(currentCurrencyRate)
+        try {
+            val currentCurrencyRate = retry(3) {
+                fetchCurrentCurrencyRate(naverFinanceURL)
+            }
+            return parseCurrencyRate(currentCurrencyRate)
+        } catch (exception: Exception) {
+            Log.e(TAG, "Network error: Failed to fetchCurrencyRate() ${exception.message}")
+        }
+
+        return parseCurrencyRate(CurrentCurrencyRate("0.0", "0.0"))
+    }
+
+    private suspend fun <T> retry(numberOfRetries: Int, block: suspend () -> T): T {
+        repeat(numberOfRetries) {
+            try {
+                return block()
+            } catch (exception: Exception) {
+                Log.e(TAG, "Network error in retry: Failed to fetchCurrencyRate() ${exception.message}")
+            }
+        }
+
+        return block()
     }
 
     private fun getCurrentTime(): String {
@@ -56,7 +77,7 @@ class CurrencyRateScraper {
         var exchangeRate = currencyRate + exchangeFee
         exchangeRate = round(exchangeRate * 100) / 100
 
-        Log.d("Y2K2", "Transfer: $transferRate Calculated: $exchangeRate")
+        Log.d(TAG, "Transfer: $transferRate Calculated: $exchangeRate")
 
         return ParsedCurrentCurrencyRate(currencyRate, exchangeRate, getCurrentTime())
     }
@@ -64,22 +85,26 @@ class CurrencyRateScraper {
     private suspend fun fetchCurrentCurrencyRate(targetUrl: String): CurrentCurrencyRate =
         withContext(Dispatchers.IO) {
             val currencyRate: CurrentCurrencyRate = CurrentCurrencyRate("0.0", "0.0")
-            Log.d("Y2K2", "fetchCurrentCurrencyRate - E")
+            Log.d(TAG, "fetchCurrentCurrencyRate - E")
 
             skrape(HttpFetcher) {
                 request {
                     url = targetUrl
                     timeout = 10000
                 }
+
                 response {
-                    Log.d("Y2K2", "${responseStatus.code} ${responseStatus.message}")
+                    Log.d(TAG, "${responseStatus.code} ${responseStatus.message}")
+                    if (responseStatus.code != 200) {
+                        throw Exception("Response code: ${responseStatus.code} - ${responseStatus.message}")
+                    }
                     htmlDocument {
                         table {
                             withClass = "tbl_calculator"
                             tbody {
                                 findFirst {
                                     val exchangeRate = this.findFirst("td").text
-                                    Log.d("Y2K2", "Exchange Rate: $exchangeRate")
+                                    Log.d(TAG, "Exchange Rate: $exchangeRate")
                                     currencyRate.currencyRate = exchangeRate
                                 }
                             }

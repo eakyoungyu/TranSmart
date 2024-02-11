@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 class CurrencyRateViewModel(
     private val bankRepository: BankRepository = Graph.bankRepository
 ): ViewModel() {
+    private val TAG = CurrencyRateViewModel::class.simpleName
     private val KAKAO_BANK = "Kakao Bank"
 
     private val _exchangeRate: MutableState<ExchangeRate> = mutableStateOf<ExchangeRate>(
@@ -41,9 +42,20 @@ class CurrencyRateViewModel(
     lateinit var getAllBanks: Flow<List<Bank>>
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            async { fetchFromWeb()}
-            val banks = async {bankRepository.getBanks()}
-            getAllBanks = banks.await()
+            val scraper = async {
+                fetchFromWeb()
+            }
+            val banks = async {
+                bankRepository.getBanks()
+            }
+
+            try {
+                getAllBanks = banks.await()
+                scraper.await()
+            } catch (exception: Exception) {
+                Log.e(TAG, exception.message.toString())
+            }
+
         }
     }
 
@@ -132,7 +144,7 @@ class CurrencyRateViewModel(
     }
 
     suspend fun fetchFromWeb() {
-        Log.d("Y2K2", "fetchFromWeb - E")
+        Log.d(TAG, "fetchFromWeb - E")
         val scraper = CurrencyRateScraper()
         val currentCurrencyRate = scraper.fetchCurrencyRate()
         _exchangeRate.value = _exchangeRate.value.copy(
