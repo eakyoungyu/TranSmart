@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kong.transmart.R
+import com.kong.transmart.viewmodels.ChartViewModel
 import com.kong.transmart.viewmodels.CurrencyRateViewModel
 import kotlinx.coroutines.launch
 
@@ -67,6 +68,8 @@ fun MainView() {
         )
 
         CurrentCurrencyRateView(viewModel)
+        Spacer(modifier = Modifier.padding(bottom = 16.dp))
+        ChartView(viewModel = ChartViewModel())
         Spacer(modifier = Modifier.padding(bottom = 16.dp))
         CurrencyCalculateView(viewModel)
         Spacer(modifier = Modifier.padding(bottom = 16.dp))
