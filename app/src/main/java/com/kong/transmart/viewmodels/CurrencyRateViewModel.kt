@@ -5,7 +5,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kong.transmart.database.BankRepository
+import com.kong.transmart.repositories.BankRepository
 import com.kong.transmart.database.Graph
 import com.kong.transmart.models.Bank
 import com.kong.transmart.models.Currency

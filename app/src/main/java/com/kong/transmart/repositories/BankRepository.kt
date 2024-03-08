@@ -1,5 +1,6 @@
-package com.kong.transmart.database
+package com.kong.transmart.repositories
 
+import com.kong.transmart.database.BankDAO
 import com.kong.transmart.models.Bank
 import kotlinx.coroutines.flow.Flow
 
