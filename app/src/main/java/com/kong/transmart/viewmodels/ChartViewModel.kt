@@ -1,34 +1,42 @@
 package com.kong.transmart.viewmodels
 
 import android.util.Log
-import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kong.transmart.BuildConfig
-import com.kong.transmart.network.currencyRateApi
+import com.kong.transmart.database.Graph
+import com.kong.transmart.models.ExchangeRateEntity
+import com.kong.transmart.repositories.ExchangeRateRepository
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
-class ChartViewModel: ViewModel() {
+class ChartViewModel(
+    private val exchangeRateRepository: ExchangeRateRepository = Graph.exchangeRateRepository
+): ViewModel() {
     private val TAG = ChartViewModel::class.simpleName
+
+    lateinit var getAllExchangeRate: Flow<List<ExchangeRateEntity>>
+
+    init {
+//        val dateFormat = SimpleDateFormat("yyyyMMdd")
+//        val date = dateFormat.parse("20240116")
+
+        viewModelScope.launch {
+            getAllExchangeRate = exchangeRateRepository.getAllExchangeRates()
+
+//            exchangeRateRepository.addExchangeRate(ExchangeRateEntity(rate = 988.3, date = date))
+            fetchExchangeRate()
+        }
+    }
+
     fun fetchExchangeRate() {
         fetchExchangeRateByDate("20240116")
     }
 
     private fun fetchExchangeRateByDate(searchDate: String) {
         viewModelScope.launch {
-            try {
-                val response = currencyRateApi.getExchangeRate(BuildConfig.API_KEY, searchDate, "AP01")
-                if (response?.isNotEmpty() == true && response[0].result == 1) {
-                    Log.d(TAG, response.toString())
-                    val exchangeRate = response.find {it.cur_unit == "CAD"}
-                    Log.d(TAG, "Open API Exchange rate: ${exchangeRate?.deal_bas_r}")
-                } else {
-                    Log.e(TAG, "Error while fetching exchange rate: response is empty")
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "Error while fetching exchange rate ${e.message}")
-            }
+            exchangeRateRepository.test(searchDate)
 
         }
     }
+
 }
