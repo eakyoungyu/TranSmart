@@ -8,6 +8,7 @@ import androidx.room.Query
 import androidx.room.TypeConverter
 import androidx.room.Update
 import com.kong.transmart.models.ExchangeRateEntity
+import com.kong.transmart.util.DateUtils
 import kotlinx.coroutines.flow.Flow
 import java.util.Date
 
@@ -44,10 +45,10 @@ abstract class ExchangeRateDAO {
 class DateConverter {
     @TypeConverter
     fun fromDate(date: Date?): Long? {
-        return date?.time
+        return date?.let { DateUtils.dateToLong(it) }
     }
     @TypeConverter
     fun toDate(timestamp: Long?): Date? {
-        return timestamp?.let { Date(it) }
+        return timestamp?.let { DateUtils.longToDate(it) }
     }
 }
