@@ -1,10 +1,10 @@
-package com.kong.transmart.database
+package com.kong.transmart.data.local
 
 import android.content.Context
 import androidx.room.Room
-import com.kong.transmart.network.CurrencyRateApi
-import com.kong.transmart.repositories.BankRepository
-import com.kong.transmart.repositories.ExchangeRateRepository
+import com.kong.transmart.data.remote.CurrencyRateApi
+import com.kong.transmart.data.repository.BankRepository
+import com.kong.transmart.data.repository.ExchangeRateRepository
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

@@ -1,7 +1,7 @@
-package com.kong.transmart.repositories
+package com.kong.transmart.data.repository
 
-import com.kong.transmart.database.BankDAO
-import com.kong.transmart.models.Bank
+import com.kong.transmart.data.local.BankDAO
+import com.kong.transmart.model.Bank
 import kotlinx.coroutines.flow.Flow
 
 class BankRepository(private val bankDao: BankDAO){

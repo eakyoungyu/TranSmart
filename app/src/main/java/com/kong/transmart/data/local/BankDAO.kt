@@ -1,4 +1,4 @@
-package com.kong.transmart.database
+package com.kong.transmart.data.local
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.kong.transmart.models.Bank
+import com.kong.transmart.model.Bank
 import kotlinx.coroutines.flow.Flow
 
 @Dao

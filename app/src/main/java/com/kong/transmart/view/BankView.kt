@@ -1,4 +1,4 @@
-package com.kong.transmart.views
+package com.kong.transmart.view
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
@@ -21,7 +21,6 @@ import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.Divider
@@ -38,8 +37,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.kong.transmart.R
-import com.kong.transmart.models.Bank
-import com.kong.transmart.viewmodels.CurrencyRateViewModel
+import com.kong.transmart.model.Bank
+import com.kong.transmart.viewmodel.CurrencyRateViewModel
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable

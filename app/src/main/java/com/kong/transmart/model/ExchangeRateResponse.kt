@@ -1,4 +1,4 @@
-package com.kong.transmart.models
+package com.kong.transmart.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

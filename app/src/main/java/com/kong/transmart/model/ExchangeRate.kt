@@ -1,4 +1,4 @@
-package com.kong.transmart.models
+package com.kong.transmart.model
 
 data class ExchangeRate (
     val from: Currency,

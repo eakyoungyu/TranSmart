@@ -1,4 +1,4 @@
-package com.kong.transmart.views
+package com.kong.transmart.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -37,8 +37,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kong.transmart.R
-import com.kong.transmart.viewmodels.ChartViewModel
-import com.kong.transmart.viewmodels.CurrencyRateViewModel
+import com.kong.transmart.viewmodel.ChartViewModel
+import com.kong.transmart.viewmodel.CurrencyRateViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)

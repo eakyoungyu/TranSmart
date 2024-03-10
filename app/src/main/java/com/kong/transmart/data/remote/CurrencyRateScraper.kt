@@ -1,4 +1,4 @@
-package com.kong.transmart.network
+package com.kong.transmart.data.remote
 
 import android.util.Log
 import it.skrape.core.htmlDocument
@@ -30,7 +30,7 @@ class CurrencyRateScraper {
     private val naverFinanceURL = "https://finance.naver.com/marketindex/exchangeDetail.naver?marketindexCd=FX_CADKRW"
     private val moinUrl = "https://www.themoin.com/currency/info/cad"
     private val wirebarleyUrl = "https://www.wirebarley.com/"
-    suspend fun fetchCurrencyRate(): ParsedCurrentCurrencyRate{
+    suspend fun fetchCurrencyRate(): ParsedCurrentCurrencyRate {
         Log.i(TAG, "Start fetching")
 
         try {

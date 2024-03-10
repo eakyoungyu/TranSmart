@@ -1,7 +1,7 @@
-package com.kong.transmart.network
+package com.kong.transmart.data.remote
 
 import com.kong.transmart.BuildConfig
-import com.kong.transmart.models.ExchangeRateResponse
+import com.kong.transmart.model.ExchangeRateResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 

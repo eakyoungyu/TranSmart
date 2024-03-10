@@ -1,4 +1,4 @@
-package com.kong.transmart.database
+package com.kong.transmart.data.local
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -7,7 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.TypeConverter
 import androidx.room.Update
-import com.kong.transmart.models.ExchangeRateEntity
+import com.kong.transmart.model.ExchangeRateEntity
 import com.kong.transmart.util.DateUtils
 import kotlinx.coroutines.flow.Flow
 import java.util.Date

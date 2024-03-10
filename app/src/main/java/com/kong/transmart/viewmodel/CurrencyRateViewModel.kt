@@ -1,16 +1,16 @@
-package com.kong.transmart.viewmodels
+package com.kong.transmart.viewmodel
 
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kong.transmart.repositories.BankRepository
-import com.kong.transmart.database.Graph
-import com.kong.transmart.models.Bank
-import com.kong.transmart.models.Currency
-import com.kong.transmart.models.ExchangeRate
-import com.kong.transmart.network.CurrencyRateScraper
+import com.kong.transmart.data.repository.BankRepository
+import com.kong.transmart.data.local.Graph
+import com.kong.transmart.model.Bank
+import com.kong.transmart.model.Currency
+import com.kong.transmart.model.ExchangeRate
+import com.kong.transmart.data.remote.CurrencyRateScraper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow

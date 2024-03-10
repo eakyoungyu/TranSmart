@@ -1,12 +1,12 @@
-package com.kong.transmart.database
+package com.kong.transmart.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.kong.transmart.models.Bank
-import com.kong.transmart.models.ExchangeRateEntity
+import com.kong.transmart.model.Bank
+import com.kong.transmart.model.ExchangeRateEntity
 
 
 @Database(

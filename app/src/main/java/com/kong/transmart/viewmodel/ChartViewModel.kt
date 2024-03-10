@@ -1,11 +1,11 @@
-package com.kong.transmart.viewmodels
+package com.kong.transmart.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kong.transmart.database.Graph
-import com.kong.transmart.models.ExchangeRateEntity
-import com.kong.transmart.repositories.ExchangeRateRepository
+import com.kong.transmart.data.local.Graph
+import com.kong.transmart.model.ExchangeRateEntity
+import com.kong.transmart.data.repository.ExchangeRateRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
@@ -22,8 +22,7 @@ class ChartViewModel(
 
         viewModelScope.launch {
             getAllExchangeRate = exchangeRateRepository.getAllExchangeRates()
-
-//            exchangeRateRepository.addExchangeRate(ExchangeRateEntity(rate = 988.3, date = date))
+            exchangeRateRepository.deleteAllExchangeRates()
             fetchExchangeRate()
         }
     }
@@ -34,7 +33,8 @@ class ChartViewModel(
 
     private fun fetchExchangeRateByDate(searchDate: String) {
         viewModelScope.launch {
-            exchangeRateRepository.test(searchDate)
+            Log.d(TAG, "fetchExchangeRateByDate: $searchDate")
+            exchangeRateRepository.getExchangeRatesForLastWeek()
 
         }
     }
