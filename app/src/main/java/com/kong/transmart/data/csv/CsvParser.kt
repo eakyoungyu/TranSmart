@@ -11,7 +11,7 @@ class CsvParser(private val inputStream: InputStream) {
         val lines = csvReader.readAll()
 
         val dates = lines.first().drop(1)
-        val rates = lines[4].drop(1)
+        val rates = lines.last().drop(1)
 
         val exchangeRateMap = dates.zip(rates).toMap()
         csvReader.close()
