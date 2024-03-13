@@ -14,7 +14,6 @@ import java.util.Date
 
 class ExchangeRateRepository(
     private val exchangeRateDao: ExchangeRateDAO,
-    private val currencyRateApi: CurrencyRateApi,
     private val csvParser: CsvParser
 ) {
     private val TAG = ExchangeRateRepository::class.simpleName
@@ -75,62 +74,12 @@ class ExchangeRateRepository(
     }
 
     suspend fun getExchangeRateByDate(date: Date): Flow<ExchangeRateEntity> {
-        val exchangeRateFromDB = exchangeRateDao.getExchangeRateByDate(date).first()
-        if (exchangeRateFromDB != null) {
-            return flow { emit(exchangeRateFromDB) }
-        }
-
-        getExchangeRateFromApi(date)?.let {
-            exchangeRateDao.addExchangeRate(it)
-            return exchangeRateDao.getExchangeRateByDate(date)
-        }
-
-        return flow { emit(exchangeRateFromDB) }
+        return exchangeRateDao.getExchangeRateByDate(date)
     }
 
-    private fun getCADRateFromResponse(response: List<ExchangeRateResponse>): Double? {
-        Log.d(TAG, response.find{ it.cur_unit == "CAD" }.toString())
-        return response.find { it.cur_unit == "CAD" }?.deal_bas_r?.toDouble()
-    }
-    private suspend fun getExchangeRateFromApi(date: Date): ExchangeRateEntity? {
-        Log.d(TAG, "Fetching exchange rate for ${DateUtils.dateToString(date)}")
-        try {
-            val response = currencyRateApi.getExchangeRate(searchdate = DateUtils.dateToString(date))
-
-            if (response.isNullOrEmpty()) {
-                val prevExchangeRate = getExchangeRateByDate(DateUtils.getPreviousDate(date)).first()
-                return ExchangeRateEntity(rate = prevExchangeRate.rate, date = date)
-            }
-
-            if (response[0].result != 1)
-                throw Exception("Invalid response: result code ${response[0].result}")
-
-            getCADRateFromResponse(response)?.let {
-                return ExchangeRateEntity(rate = it, date = date)
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error while fetching exchange rate ${e.message}")
-        }
-        return null
-    }
-
-    // TODO update today's rate from 11:00 am to 8:00 pm
     suspend fun getExchangeRatesForLastWeek(): Flow<List<ExchangeRateEntity>>  {
         val dates = DateUtils.getLastWeekDatesToToday()
-        val lastWeekRates = exchangeRateDao.getExchangeRatesForLastWeek(dates[0]).first()
-        Log.d(TAG, "Last week dates: $dates")
-        Log.d(TAG, "Last week rates: $lastWeekRates")
-
-        return if (lastWeekRates.size == dates.size) {
-            flow { emit(lastWeekRates) }
-        } else {
-            dates.forEach { date ->
-                if (lastWeekRates.none { rate -> DateUtils.isSameDay(date, rate.date) }) {
-                    getExchangeRateFromApi(date)?.let { exchangeRateDao.addExchangeRate(it) }
-                }
-            }
-            exchangeRateDao.getExchangeRatesForLastWeek(dates[0])
-        }
+        return exchangeRateDao.getExchangeRatesForLastWeek(dates[0])
     }
 
     fun getExchangeRatesForLastMonth(lastMonth: Date): Flow<List<ExchangeRateEntity>> {

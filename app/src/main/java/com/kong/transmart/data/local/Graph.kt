@@ -11,7 +11,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object Graph {
     lateinit var database: BankDatabase
-    lateinit var currencyRateApi: CurrencyRateApi
     lateinit var csvParser: CsvParser
 
     val bankRepository by lazy {
@@ -19,7 +18,7 @@ object Graph {
     }
 
     val exchangeRateRepository by lazy {
-        ExchangeRateRepository(exchangeRateDao = database.exchangeRateDao(), currencyRateApi = currencyRateApi, csvParser = csvParser)
+        ExchangeRateRepository(exchangeRateDao = database.exchangeRateDao(), csvParser = csvParser)
     }
 
     fun provide(context: Context) {
@@ -27,7 +26,6 @@ object Graph {
             .createFromAsset("default-bank.db")
             .addMigrations(migration_1_2)
             .build()
-        currencyRateApi = createCurrencyRateApi()
         csvParser = CsvParser(context.assets.open("exchange_rate_cad.csv"))
     }
 
