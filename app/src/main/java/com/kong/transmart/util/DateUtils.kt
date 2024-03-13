@@ -36,7 +36,10 @@ object DateUtils {
         return calendar.time
     }
 
-    fun getTodayInKST(): String = dateToString(Date())
+    fun getToday(): Date {
+        val calendar = getCleanDateCalendar(Date())
+        return calendar.time
+    }
 
     fun isSameDay(date1: Date, date2: Date): Boolean {
         return dateToString(date1) == dateToString(date2)

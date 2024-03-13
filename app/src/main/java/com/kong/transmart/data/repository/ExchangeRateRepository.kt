@@ -6,6 +6,8 @@ import com.kong.transmart.data.local.ExchangeRateDAO
 import com.kong.transmart.model.ExchangeRateEntity
 import com.kong.transmart.model.ExchangeRateResponse
 import com.kong.transmart.data.remote.CurrencyRateApi
+import com.kong.transmart.data.remote.CurrencyRateScraper
+import com.kong.transmart.data.remote.ParsedCurrentCurrencyRate
 import com.kong.transmart.util.DateUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -14,7 +16,8 @@ import java.util.Date
 
 class ExchangeRateRepository(
     private val exchangeRateDao: ExchangeRateDAO,
-    private val csvParser: CsvParser
+    private val csvParser: CsvParser,
+    private val currencyRateScraper: CurrencyRateScraper
 ) {
     private val TAG = ExchangeRateRepository::class.simpleName
 
@@ -47,6 +50,23 @@ class ExchangeRateRepository(
                 }
             }
         }
+    }
+
+    suspend fun fetchCurrentExchangeRate(): ParsedCurrentCurrencyRate {
+        val currentRate = currencyRateScraper.fetchCurrencyRate()
+
+        val exchangeRate = ExchangeRateEntity(
+            rate = currentRate.currencyRate,
+            date = DateUtils.getToday()
+        )
+
+        if (getExchangeRateByDate(exchangeRate.date).first() == null) {
+            addExchangeRate(exchangeRate)
+        } else {
+            updateExchangeRate(exchangeRate)
+        }
+
+        return currentRate
     }
 
     suspend fun addExchangeRate(exchangeRate: ExchangeRateEntity) {

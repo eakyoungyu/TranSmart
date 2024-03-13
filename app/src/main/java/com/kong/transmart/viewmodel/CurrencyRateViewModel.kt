@@ -11,13 +11,15 @@ import com.kong.transmart.model.Bank
 import com.kong.transmart.model.Currency
 import com.kong.transmart.model.ExchangeRate
 import com.kong.transmart.data.remote.CurrencyRateScraper
+import com.kong.transmart.data.repository.ExchangeRateRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class CurrencyRateViewModel(
-    private val bankRepository: BankRepository = Graph.bankRepository
+    private val bankRepository: BankRepository = Graph.bankRepository,
+    private val exchangeRateRepository: ExchangeRateRepository = Graph.exchangeRateRepository
 ): ViewModel() {
     private val TAG = CurrencyRateViewModel::class.simpleName
     private val KAKAO_BANK = "Kakao Bank"
@@ -145,13 +147,12 @@ class CurrencyRateViewModel(
 
     suspend fun fetchFromWeb() {
         Log.d(TAG, "fetchFromWeb - E")
-        val scraper = CurrencyRateScraper()
-        val currentCurrencyRate = scraper.fetchCurrencyRate()
+        val currentExchangeRate = exchangeRateRepository.fetchCurrentExchangeRate()
         _exchangeRate.value = _exchangeRate.value.copy(
-            rate = currentCurrencyRate.currencyRate,
-            updatedTime = currentCurrencyRate.time
+            rate = currentExchangeRate.currencyRate,
+            updatedTime = currentExchangeRate.time
         )
 
-        updateBankRateByName(KAKAO_BANK, currentCurrencyRate.preferentialExchangeRate)
+        updateBankRateByName(KAKAO_BANK, currentExchangeRate.preferentialExchangeRate)
     }
 }
