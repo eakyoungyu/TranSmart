@@ -48,6 +48,12 @@ object DateUtils {
         return calendar.time
     }
 
+    fun getNextDate(date: Date): Date {
+        val calendar = getCleanDateCalendar(date)
+        calendar.add(Calendar.DAY_OF_MONTH, 1)
+        return calendar.time
+    }
+
     private fun getDatesFromDayAfterStartToToday(startCalendar: Calendar): List<Date> {
         val dates = mutableListOf<Date>()
         val endCalendar = getCleanDateCalendar(Date())
