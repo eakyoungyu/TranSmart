@@ -30,13 +30,9 @@ class ChartViewModel(
         }
     }
 
-    fun fetchExchangeRate() {
-        fetchExchangeRateByDate("20240116")
-    }
 
     private fun fetchExchangeRateByDate(searchDate: String) {
         viewModelScope.launch {
-            Log.d(TAG, "fetchExchangeRateByDate: $searchDate")
             exchangeRateRepository.getExchangeRatesForLastWeek()
 
         }
@@ -44,11 +40,9 @@ class ChartViewModel(
 
     fun onPeriodSelected(period: Period) {
         _selectedPeriod.value = period
-        Log.d(TAG, "onPeriodSelected: ${period.name}")
     }
 
     fun getSelectedPeriod(): Period {
-        Log.d(TAG, "getSelectedPeriod: ${_selectedPeriod.value.name}")
         return _selectedPeriod.value
     }
 
