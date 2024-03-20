@@ -1,5 +1,6 @@
 package com.kong.transmart.view
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Card
@@ -26,6 +28,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
@@ -62,8 +65,8 @@ fun MainView() {
             .pullRefresh(state)
     ) {
         PullRefreshIndicator(
-            refreshing, 
-            state, 
+            refreshing,
+            state,
             modifier = Modifier.align(Alignment.CenterHorizontally),
         )
 
@@ -113,63 +116,48 @@ fun CurrencyCalculateView(viewModel: CurrencyRateViewModel) {
         mutableStateOf(sourceAmount.toDouble() * currencyRate)
     }
 
-
-    Column(
-        modifier = Modifier.fillMaxWidth(),
+    Row (
+        modifier = Modifier.fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
+            .background(MaterialTheme.colorScheme.tertiary)
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
+        Text(text = sourceCurrency.code, style = MaterialTheme.typography.bodyLarge)
 
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            backgroundColor = MaterialTheme.colorScheme.primary,
-            elevation = 8.dp
-        ) {
-            Row (
-                modifier = Modifier.padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(text = sourceCurrency.code, style = MaterialTheme.typography.bodyLarge)
-
-                BasicTextField(
-                    value = TextFieldValue(
-                        text = "${sourceCurrency.symbol} $sourceAmount",
-                        selection = TextRange("${sourceCurrency.symbol} $sourceAmount".length)
-                    ),
-                    onValueChange = {
-                        val newTarget = it.text.drop(2)
-                        if (newTarget.isDigitsOnly()) {
-                            sourceAmount = newTarget
-                            viewModel.setSourceAmount(sourceAmount.toIntOrNull() ?: 0)
-                            bestTargetAmount = currencyRate * (sourceAmount.toDoubleOrNull() ?: 0.0)
-                        }
-                    },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    textStyle = MaterialTheme.typography.bodyLarge.copy(textAlign = TextAlign.End, color = MaterialTheme.colorScheme.onPrimary),
-                    modifier = Modifier.width(IntrinsicSize.Min),
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.padding(bottom = 16.dp))
-
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            backgroundColor = MaterialTheme.colorScheme.primary,
-            elevation = 8.dp
-        ) {
-            Row (
-                modifier = Modifier.padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(text = targetCurrency.code, style = MaterialTheme.typography.bodyLarge)
-                Text(
-                    text = "${targetCurrency.symbol} " + String.format("%,.2f", bestTargetAmount),
-                    style = MaterialTheme.typography.bodyLarge.copy(textAlign = TextAlign.End),
-                )
-            }
-        }
+        BasicTextField(
+            value = TextFieldValue(
+                text = "${sourceCurrency.symbol} $sourceAmount",
+                selection = TextRange("${sourceCurrency.symbol} $sourceAmount".length)
+            ),
+            onValueChange = {
+                val newTarget = it.text.drop(2)
+                if (newTarget.isDigitsOnly()) {
+                    sourceAmount = newTarget
+                    viewModel.setSourceAmount(sourceAmount.toIntOrNull() ?: 0)
+                    bestTargetAmount = currencyRate * (sourceAmount.toDoubleOrNull() ?: 0.0)
+                }
+            },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            textStyle = MaterialTheme.typography.bodyLarge.copy(textAlign = TextAlign.End, color = MaterialTheme.colorScheme.onPrimary),
+            modifier = Modifier.width(IntrinsicSize.Min),
+        )
     }
+
+//    Spacer(modifier = Modifier.padding(bottom = 16.dp))
+//
+//    Row (
+//        modifier = Modifier.fillMaxWidth().padding(16.dp),
+//        horizontalArrangement = Arrangement.SpaceBetween,
+//        verticalAlignment = Alignment.CenterVertically,
+//    ) {
+//        Text(text = targetCurrency.code, style = MaterialTheme.typography.bodyLarge)
+//        Text(
+//            text = "${targetCurrency.symbol} " + String.format("%,.2f", bestTargetAmount),
+//            style = MaterialTheme.typography.bodyLarge.copy(textAlign = TextAlign.End),
+//        )
+//    }
 
 }
 

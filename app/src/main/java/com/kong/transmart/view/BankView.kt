@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -43,11 +44,6 @@ import com.kong.transmart.viewmodel.CurrencyRateViewModel
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun BankListView(viewModel: CurrencyRateViewModel) {
-    Card (
-        modifier = Modifier.fillMaxWidth(),
-        backgroundColor = MaterialTheme.colorScheme.primary,
-        elevation = 8.dp
-    ) {
         val banks = viewModel.getAllBanks.collectAsState(initial = listOf())
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -69,8 +65,7 @@ fun BankListView(viewModel: CurrencyRateViewModel) {
 
                 items(banks.value, key={bank-> bank.id}) {
                         bank ->
-                    Divider(modifier = Modifier.padding(8.dp))
-
+                    Spacer(modifier = Modifier.padding(8.dp))
                     val dismissState = rememberDismissState(
                         confirmStateChange = {
                             if (bank.removable && it == DismissValue.DismissedToStart) {
@@ -112,8 +107,6 @@ fun BankListView(viewModel: CurrencyRateViewModel) {
             }
 
         }
-
-    }
 
 }
 
