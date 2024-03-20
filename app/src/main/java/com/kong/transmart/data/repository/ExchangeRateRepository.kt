@@ -99,10 +99,16 @@ class ExchangeRateRepository(
 
     suspend fun getExchangeRatesForLastWeek(): Flow<List<ExchangeRateEntity>>  {
         val dates = DateUtils.getLastWeekDatesToToday()
-        return exchangeRateDao.getExchangeRatesForLastWeek(dates[0])
+        return exchangeRateDao.getExchangeRatesForLastWeek(dates.first())
     }
 
-    fun getExchangeRatesForLastMonth(lastMonth: Date): Flow<List<ExchangeRateEntity>> {
-        return exchangeRateDao.getExchangeRatesForLastMonth(lastMonth)
+    suspend fun getExchangeRatesForLastMonth(): Flow<List<ExchangeRateEntity>> {
+        val dates = DateUtils.getLastMonthDatesToToday()
+        return exchangeRateDao.getExchangeRatesForLastMonth(dates.first())
+    }
+
+    suspend fun getExchangeRatesForLastYear(): Flow<List<ExchangeRateEntity>> {
+        val dates = DateUtils.getLastYearDatesToToday()
+        return exchangeRateDao.getExchangeRatesForLastYear(dates.first())
     }
 }

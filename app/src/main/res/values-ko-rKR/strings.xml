@@ -6,4 +6,7 @@
     <string name="label_bank_rate">송금 환율</string>
     <string name="label_bank_total">합계</string>
     <string name="last_updated">업데이트 시간</string>
+    <string name="period_week">1주</string>
+    <string name="period_month">1달</string>
+    <string name="period_year">1년</string>
 </resources>

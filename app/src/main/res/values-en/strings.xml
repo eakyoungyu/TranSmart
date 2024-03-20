@@ -6,4 +6,7 @@
     <string name="label_bank_rate">Rate</string>
     <string name="label_bank_total">Total</string>
     <string name="last_updated">Last updated</string>
+    <string name="period_week">1W</string>
+    <string name="period_month">1M</string>
+    <string name="period_year">1Y</string>
 </resources>

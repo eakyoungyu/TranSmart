@@ -40,6 +40,9 @@ abstract class ExchangeRateDAO {
 
     @Query("SELECT * FROM `exchange-rate-table` WHERE `exchange-rate-date` >= :lastMonth ORDER BY `exchange-rate-date` ASC")
     abstract fun getExchangeRatesForLastMonth(lastMonth: Date): Flow<List<ExchangeRateEntity>>
+
+    @Query("SELECT * FROM `exchange-rate-table` WHERE `exchange-rate-date` >= :lastYear ORDER BY `exchange-rate-date` ASC")
+    abstract fun getExchangeRatesForLastYear(lastYear: Date): Flow<List<ExchangeRateEntity>>
 }
 
 class DateConverter {
