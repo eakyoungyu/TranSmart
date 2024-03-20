@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
@@ -33,9 +32,9 @@ fun ChartView (viewModel: ChartViewModel) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .height(350.dp)) {
+        Box(modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
             ChartViewLayer(
                 exchangeRates = viewModel.exchangeRatesWeek.collectAsState(initial = listOf()).value,
                 visible = viewModel.getSelectedPeriod() == Period.Week
@@ -97,8 +96,13 @@ fun CustomLineChartView(exchangeRates: List<ExchangeRateEntity>) {
         dragPointVisible = true,
         dragPointSize = 0f,
         dragActivePointSize = 8f,
-        chartViewStyle = ChartViewDefaults.style(backgroundColor = MaterialTheme.colorScheme.primary)
-//        chartViewStyle =
+        chartViewStyle = ChartViewDefaults.style(
+            backgroundColor = MaterialTheme.colorScheme.primary,
+            width = 250.dp,
+            outerPadding = 0.dp,
+            innerPadding = 10.dp,
+            shadow = 0.dp
+        )
     )
     if (exchangeRates.isNotEmpty()) {
         val dataSet = ChartDataSet(
