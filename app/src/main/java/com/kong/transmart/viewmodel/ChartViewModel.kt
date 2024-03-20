@@ -26,7 +26,7 @@ class ChartViewModel(
             exchangeRatesMonth = exchangeRateRepository.getExchangeRatesForLastMonth()
             exchangeRatesYear = exchangeRateRepository.getExchangeRatesForLastYear()
 //            exchangeRateRepository.deleteAllExchangeRates()
-//            exchangeRateRepository.loadFromCsv()
+            exchangeRateRepository.loadFromCsv()
         }
     }
 
