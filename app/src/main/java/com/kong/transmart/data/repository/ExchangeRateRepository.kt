@@ -60,10 +60,14 @@ class ExchangeRateRepository(
             date = DateUtils.getToday()
         )
 
-        if (getExchangeRateByDate(exchangeRate.date).first() == null) {
+        Log.d(TAG, "fetchCurrentExchangeRate: ${exchangeRate.date}, ${exchangeRate.rate}")
+
+        val searchedExchangeRate = getExchangeRateByDate(exchangeRate.date).first()
+
+        if (searchedExchangeRate == null) {
             addExchangeRate(exchangeRate)
         } else {
-            updateExchangeRate(exchangeRate)
+            updateExchangeRate(searchedExchangeRate.copy(rate = exchangeRate.rate))
         }
 
         return currentRate
