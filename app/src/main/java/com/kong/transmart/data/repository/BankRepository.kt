@@ -3,8 +3,9 @@ package com.kong.transmart.data.repository
 import com.kong.transmart.data.local.BankDAO
 import com.kong.transmart.model.Bank
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class BankRepository(private val bankDao: BankDAO){
+class BankRepository @Inject constructor (private val bankDao: BankDAO){
     suspend fun addBank(bank: Bank) {
         bankDao.addBank(bank)
     }

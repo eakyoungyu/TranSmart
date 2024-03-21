@@ -6,20 +6,23 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kong.transmart.data.repository.BankRepository
-import com.kong.transmart.data.local.Graph
 import com.kong.transmart.model.Bank
 import com.kong.transmart.model.Currency
 import com.kong.transmart.model.ExchangeRate
 import com.kong.transmart.data.remote.CurrencyRateScraper
 import com.kong.transmart.data.repository.ExchangeRateRepository
+import com.kong.transmart.data.worker.WorkHandler
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class CurrencyRateViewModel(
-    private val bankRepository: BankRepository = Graph.bankRepository,
-    private val exchangeRateRepository: ExchangeRateRepository = Graph.exchangeRateRepository
+@HiltViewModel
+class CurrencyRateViewModel @Inject constructor(
+    private val bankRepository: BankRepository,
+    private val exchangeRateRepository: ExchangeRateRepository
 ): ViewModel() {
     private val TAG = CurrencyRateViewModel::class.simpleName
     private val KAKAO_BANK = "Kakao Bank"
@@ -58,6 +61,10 @@ class CurrencyRateViewModel(
                 Log.e(TAG, exception.message.toString())
             }
 
+
+            // TODO Remove this after implementing WorkHandler
+            val workHandler = WorkHandler()
+            workHandler.scheduleDailyWork()
         }
     }
 

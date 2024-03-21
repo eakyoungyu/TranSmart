@@ -8,10 +8,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.kong.transmart.data.local.Graph
 import com.kong.transmart.ui.theme.TranSmartTheme
 import com.kong.transmart.view.MainView
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.HiltAndroidApp
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,9 +31,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@HiltAndroidApp
 class TranSmart: Application() {
-    override fun onCreate() {
-        super.onCreate()
-        Graph.provide(this)
-    }
 }

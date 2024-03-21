@@ -47,13 +47,14 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MainView() {
-    val viewModel:CurrencyRateViewModel = viewModel()
+    val currencyRateViewModel: CurrencyRateViewModel = viewModel()
+    val chartViewModel: ChartViewModel = viewModel()
 
     val refreshScope = rememberCoroutineScope()
     var refreshing by remember { mutableStateOf(false) }
     fun refresh() = refreshScope.launch {
         refreshing = true
-        viewModel.fetchFromWeb()
+        currencyRateViewModel.fetchFromWeb()
         refreshing = false
     }
     val state = rememberPullRefreshState(refreshing, ::refresh)
@@ -70,14 +71,13 @@ fun MainView() {
             modifier = Modifier.align(Alignment.CenterHorizontally),
         )
 
-        CurrentCurrencyRateView(viewModel)
+        CurrentCurrencyRateView(currencyRateViewModel)
         Spacer(modifier = Modifier.padding(bottom = 16.dp))
-        ChartView(viewModel = ChartViewModel())
+        ChartView(viewModel = chartViewModel)
         Spacer(modifier = Modifier.padding(bottom = 16.dp))
-        CurrencyCalculateView(viewModel)
+        CurrencyCalculateView(currencyRateViewModel)
         Spacer(modifier = Modifier.padding(bottom = 16.dp))
-        BankListView(viewModel)
-
+        BankListView(currencyRateViewModel)
 
     }
 }

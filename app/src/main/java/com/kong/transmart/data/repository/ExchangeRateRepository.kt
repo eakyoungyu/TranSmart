@@ -11,8 +11,9 @@ import com.kong.transmart.util.StringUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import java.util.Date
+import javax.inject.Inject
 
-class ExchangeRateRepository(
+class ExchangeRateRepository @Inject constructor(
     private val exchangeRateDao: ExchangeRateDAO,
     private val csvParser: CsvParser,
     private val currencyRateScraper: CurrencyRateScraper

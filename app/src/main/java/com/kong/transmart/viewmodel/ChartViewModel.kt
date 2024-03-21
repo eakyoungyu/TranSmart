@@ -6,14 +6,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kong.transmart.R
-import com.kong.transmart.data.local.Graph
 import com.kong.transmart.model.ExchangeRateEntity
 import com.kong.transmart.data.repository.ExchangeRateRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ChartViewModel(
-    private val exchangeRateRepository: ExchangeRateRepository = Graph.exchangeRateRepository
+@HiltViewModel
+class ChartViewModel @Inject constructor(
+    private val exchangeRateRepository: ExchangeRateRepository
 ): ViewModel() {
     private val TAG = ChartViewModel::class.simpleName
     private val _selectedPeriod = mutableStateOf(Period.Week)
