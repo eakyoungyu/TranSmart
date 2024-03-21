@@ -1,11 +1,13 @@
 package com.kong.transmart.util
 
+import android.util.Log
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.TimeZone
 
 object DateUtils {
+    private val TAG = "DateUtils"
     private val kstTimeZone = TimeZone.getTimeZone("Asia/Seoul")
     private val dateFormat = SimpleDateFormat("yyyyMMdd").apply {
         timeZone = kstTimeZone
@@ -23,7 +25,17 @@ object DateUtils {
 
     fun dateToString(date: Date): String = dateFormat.format(date)
 
-    fun stringToDate(dateString: String): Date = dateFormat.parse(dateString)!!
+    fun stringToDate(dateString: String): Date {
+        try {
+            val date = dateFormat.parse(dateString)
+            val calendar = getCleanDateCalendar(date)
+            return calendar.time
+        } catch (exception: Exception) {
+            Log.e(TAG, "Failed to parse the date string($dateString): $exception")
+
+            return getToday()
+        }
+    }
 
     fun dateToLong(date: Date): Long {
         val calendar = getCleanDateCalendar(date)
