@@ -1,6 +1,7 @@
 package com.kong.transmart.data.remote
 
 import android.util.Log
+import com.kong.transmart.util.StringUtils
 import it.skrape.core.htmlDocument
 import it.skrape.fetcher.HttpFetcher
 import it.skrape.fetcher.response
@@ -9,10 +10,8 @@ import it.skrape.selects.html5.table
 import it.skrape.selects.html5.tbody
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
 import kotlin.math.round
 
 data class CurrentCurrencyRate(
@@ -64,14 +63,9 @@ class CurrencyRateScraper {
         return simpleDateFormat.format(currentDate)
     }
 
-    private fun stringToDouble(string: String): Double {
-        val numberFormat = NumberFormat.getInstance(Locale.US)
-        return numberFormat.parse(string)?.toDouble() ?: 0.0
-    }
-
     private fun parseCurrencyRate(rate: CurrentCurrencyRate): ParsedCurrentCurrencyRate {
-        val currencyRate = stringToDouble(rate.currencyRate)
-        val transferRate = stringToDouble(rate.transferRate)
+        val currencyRate = StringUtils.numberFormatToDouble(rate.currencyRate)
+        val transferRate = StringUtils.numberFormatToDouble(rate.transferRate)
 
         val exchangeFee = (transferRate - currencyRate) * 0.5
         var exchangeRate = currencyRate + exchangeFee

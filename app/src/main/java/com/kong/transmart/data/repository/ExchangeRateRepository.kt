@@ -4,14 +4,12 @@ import android.util.Log
 import com.kong.transmart.data.csv.CsvParser
 import com.kong.transmart.data.local.ExchangeRateDAO
 import com.kong.transmart.model.ExchangeRateEntity
-import com.kong.transmart.model.ExchangeRateResponse
-import com.kong.transmart.data.remote.CurrencyRateApi
 import com.kong.transmart.data.remote.CurrencyRateScraper
 import com.kong.transmart.data.remote.ParsedCurrentCurrencyRate
 import com.kong.transmart.util.DateUtils
+import com.kong.transmart.util.StringUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
 import java.util.Date
 
 class ExchangeRateRepository(
@@ -40,7 +38,7 @@ class ExchangeRateRepository(
                             nextDate = DateUtils.getNextDate(nextDate)
                         }
                     }
-                    val curRate = currentDate.second.replace(",", "").toDouble()
+                    val curRate = StringUtils.numberFormatToDouble(currentDate.second)
                     acc.add(ExchangeRateEntity(rate = curRate, date = curDate))
                     acc
                 }
