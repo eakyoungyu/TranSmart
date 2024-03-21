@@ -63,6 +63,9 @@ dependencies {
     val nav_version = "2.7.6"
     val compose_version = "1.6.0-rc01"
     val room = "2.6.1"
+    val work_version = "2.9.0"
+
+    implementation("androidx.work:work-runtime-ktx:$work_version")
 
     implementation("androidx.room:room-runtime:$room")
     implementation("androidx.room:room-ktx:$room")
