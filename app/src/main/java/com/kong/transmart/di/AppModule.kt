@@ -66,12 +66,6 @@ class AppModule {
         return ExchangeRateRepository(exchangeRateDao, csvParser, currencyRateScraper)
     }
 
-    @Singleton
-    @Provides
-    fun provideWorkHandler(@ApplicationContext context: Context): WorkHandler {
-        return WorkHandler(context)
-    }
-
 //    private fun createCurrencyRateApi(): CurrencyRateApi {
 //        val retrofit = Retrofit.Builder().baseUrl("https://www.koreaexim.go.kr/site/program/financial/")
 //            .addConverterFactory(GsonConverterFactory.create())
