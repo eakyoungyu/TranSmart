@@ -64,7 +64,7 @@ dependencies {
     val nav_version = "2.7.6"
     val compose_version = "1.6.0-rc01"
     val room = "2.6.1"
-    val work_version = "2.9.0"
+    val work_version = "2.7.1"
 
     implementation("androidx.work:work-runtime-ktx:$work_version")
 
@@ -93,6 +93,7 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.48")
     implementation("androidx.hilt:hilt-work:1.2.0")
     kapt("androidx.hilt:hilt-compiler:1.2.0")
+//    implementation("androidx.startup:startup-runtime:1.1.1")
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
