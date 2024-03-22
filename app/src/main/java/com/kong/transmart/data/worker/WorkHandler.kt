@@ -9,9 +9,8 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 
-class WorkHandler() {
-    // TODO change getInstance() to getInstance(context)
-    private val workManager = WorkManager.getInstance()
+class WorkHandler(context: Context) {
+    private val workManager = WorkManager.getInstance(context)
     private val TAG_SCRAPER = "SCRAPER"
 
     fun scheduleDailyWork() {
@@ -19,7 +18,9 @@ class WorkHandler() {
         val scrape = OneTimeWorkRequestBuilder<ScrapeWorker>()
             .addTag(TAG_SCRAPER)
             .build()
-        workManager.enqueue(scrape)
 
+        val saveDB = OneTimeWorkRequestBuilder<SaveDBWorker>()
+            .build()
+        workManager.enqueue(saveDB)
     }
 }

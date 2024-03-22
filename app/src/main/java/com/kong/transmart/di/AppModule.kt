@@ -10,6 +10,7 @@ import com.kong.transmart.data.local.migration_1_2
 import com.kong.transmart.data.remote.CurrencyRateScraper
 import com.kong.transmart.data.repository.BankRepository
 import com.kong.transmart.data.repository.ExchangeRateRepository
+import com.kong.transmart.data.worker.WorkHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -63,6 +64,12 @@ class AppModule {
     @Provides
     fun provideExchangeRateRepository(exchangeRateDao: ExchangeRateDAO, csvParser: CsvParser, currencyRateScraper: CurrencyRateScraper): ExchangeRateRepository {
         return ExchangeRateRepository(exchangeRateDao, csvParser, currencyRateScraper)
+    }
+
+    @Singleton
+    @Provides
+    fun provideWorkHandler(@ApplicationContext context: Context): WorkHandler {
+        return WorkHandler(context)
     }
 
 //    private fun createCurrencyRateApi(): CurrencyRateApi {

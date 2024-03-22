@@ -9,7 +9,6 @@ import com.kong.transmart.data.repository.BankRepository
 import com.kong.transmart.model.Bank
 import com.kong.transmart.model.Currency
 import com.kong.transmart.model.ExchangeRate
-import com.kong.transmart.data.remote.CurrencyRateScraper
 import com.kong.transmart.data.repository.ExchangeRateRepository
 import com.kong.transmart.data.worker.WorkHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +21,8 @@ import javax.inject.Inject
 @HiltViewModel
 class CurrencyRateViewModel @Inject constructor(
     private val bankRepository: BankRepository,
-    private val exchangeRateRepository: ExchangeRateRepository
+    private val exchangeRateRepository: ExchangeRateRepository,
+    private val workHandler: WorkHandler
 ): ViewModel() {
     private val TAG = CurrencyRateViewModel::class.simpleName
     private val KAKAO_BANK = "Kakao Bank"
@@ -63,7 +63,7 @@ class CurrencyRateViewModel @Inject constructor(
 
 
             // TODO Remove this after implementing WorkHandler
-            val workHandler = WorkHandler()
+//            val workHandler = WorkHandler()
             workHandler.scheduleDailyWork()
         }
     }
