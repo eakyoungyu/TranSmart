@@ -10,6 +10,7 @@ import com.kong.transmart.util.DateUtils
 import com.kong.transmart.util.StringUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import java.util.Date
 import javax.inject.Inject
 
@@ -61,15 +62,15 @@ class ExchangeRateRepository @Inject constructor(
 
         Log.d(TAG, "fetchCurrentExchangeRate: ${exchangeRate.date}, ${exchangeRate.rate}")
 
-        val searchedExchangeRate = getExchangeRateByDate(exchangeRate.date).first()
-
-        if (searchedExchangeRate == null) {
-            addExchangeRate(exchangeRate)
-        } else {
-            updateExchangeRate(searchedExchangeRate.copy(rate = exchangeRate.rate))
-        }
+        updateOrInsertExchangeRate(exchangeRate)
 
         return currentRate
+    }
+
+    suspend fun updateOrInsertExchangeRate(exchangeRate: ExchangeRateEntity) {
+        getExchangeRateByDate(exchangeRate.date).firstOrNull()?.let { existingRate ->
+            updateExchangeRate(existingRate.copy(rate = exchangeRate.rate))
+        } ?: addExchangeRate(exchangeRate)
     }
 
     suspend fun addExchangeRate(exchangeRate: ExchangeRateEntity) {

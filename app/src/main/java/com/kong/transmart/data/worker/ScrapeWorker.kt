@@ -9,8 +9,6 @@ import com.kong.transmart.data.remote.CurrencyRateScraper
 import com.kong.transmart.util.DateUtils
 
 class ScrapeWorker(appContext: Context, params: WorkerParameters): CoroutineWorker(appContext, params) {
-    val KEY_RATE = "SCRAPE_WORKER_RATE"
-    val KEY_DATE = "SCRAPE_WORKER_DATE"
     private val TAG = ScrapeWorker::class.simpleName
 
     override suspend fun doWork(): Result {
@@ -19,8 +17,8 @@ class ScrapeWorker(appContext: Context, params: WorkerParameters): CoroutineWork
         val date = DateUtils.getToday()
 
         val outputData = workDataOf(
-            KEY_RATE to output.currencyRate,
-            KEY_DATE to DateUtils.dateToString(date)
+            WorkConstants.KEY_RATE to output.currencyRate,
+            WorkConstants.KEY_DATE to DateUtils.dateToString(date)
         )
 
         Log.d(TAG, "${output.currencyRate} ${DateUtils.dateToString(date)}")
