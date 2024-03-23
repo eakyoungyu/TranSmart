@@ -74,11 +74,17 @@ class ExchangeRateRepository @Inject constructor(
     }
 
     suspend fun addExchangeRate(exchangeRate: ExchangeRateEntity) {
-        exchangeRateDao.addExchangeRate(exchangeRate)
+        if (validateExchangeRate(exchangeRate))
+            exchangeRateDao.addExchangeRate(exchangeRate)
     }
 
     suspend fun updateExchangeRate(exchangeRate: ExchangeRateEntity) {
-        exchangeRateDao.updateExchangeRate(exchangeRate)
+        if (validateExchangeRate(exchangeRate))
+            exchangeRateDao.updateExchangeRate(exchangeRate)
+    }
+
+    fun validateExchangeRate(exchangeRate: ExchangeRateEntity): Boolean {
+        return exchangeRate.rate > 0
     }
 
     suspend fun deleteExchangeRate(exchangeRate: ExchangeRateEntity) {
