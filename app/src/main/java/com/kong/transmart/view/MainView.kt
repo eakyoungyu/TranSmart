@@ -1,5 +1,12 @@
 package com.kong.transmart.view
 
+import android.Manifest
+import android.content.Context
+import android.os.Build
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,7 +20,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -21,6 +27,7 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
@@ -37,9 +45,12 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.kong.transmart.MainActivity
 import com.kong.transmart.R
+import com.kong.transmart.util.NotificationUtils
 import com.kong.transmart.viewmodel.ChartViewModel
 import com.kong.transmart.viewmodel.CurrencyRateViewModel
 import kotlinx.coroutines.launch
@@ -58,6 +69,9 @@ fun MainView() {
         refreshing = false
     }
     val state = rememberPullRefreshState(refreshing, ::refresh)
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+        PermissionLauncher(context = LocalContext.current)
 
     Column(
         modifier = Modifier
@@ -79,6 +93,39 @@ fun MainView() {
         Spacer(modifier = Modifier.padding(bottom = 16.dp))
         BankListView(currencyRateViewModel)
 
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+@Composable
+fun PermissionLauncher(context: Context) {
+    val requestPermissionLauncher = rememberLauncherForActivityResult( // 첫번째 dialog 실행
+        contract = ActivityResultContracts.RequestMultiplePermissions(),
+        onResult = {
+                permissions ->
+            if (permissions[Manifest.permission.POST_NOTIFICATIONS] == true) {
+                // permission granted
+            } else {
+                // if permission request is denied before, rationalRequired is true
+                val rationalRequired = ActivityCompat.shouldShowRequestPermissionRationale(
+                    context as MainActivity,
+                    Manifest.permission.POST_NOTIFICATIONS
+                )
+
+                if (rationalRequired) {
+                    Toast.makeText(context, "Notification permission is required!", Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(context, "Notification permission is required. Turn on it in settings", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    )
+    LaunchedEffect(key1 = true) {
+        if (!NotificationUtils.hasPermission(context)) {
+            requestPermissionLauncher.launch(
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS)
+            )
+        }
     }
 }
 
@@ -117,7 +164,8 @@ fun CurrencyCalculateView(viewModel: CurrencyRateViewModel) {
     }
 
     Row (
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .clip(RoundedCornerShape(10.dp))
             .background(MaterialTheme.colorScheme.tertiary)
             .padding(16.dp),
