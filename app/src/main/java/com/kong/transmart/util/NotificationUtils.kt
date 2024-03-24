@@ -20,18 +20,23 @@ import java.util.concurrent.atomic.AtomicInteger
 
 object NotificationUtils {
     private val TAG = NotificationUtils::class.simpleName
-    private const val CHANNEL_ID = "com.kong.transmart"
+    private const val CHANNEL_ID_LOW_PRICE_ALERT = "low_price_alert"
+
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     fun hasPermission(context: Context): Boolean {
         return ContextCompat.checkSelfPermission(context,
             Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
     }
 
-    fun createNotificationChannel(context: Context) {
+    fun createNotificationChannels(context: Context) {
+        createNotificationChannel(context, CHANNEL_ID_LOW_PRICE_ALERT, "Low Price Alert",
+            NotificationManager.IMPORTANCE_LOW, "Send a notification in the event of identifying the lowest price within a week.")
+    }
+
+    private fun createNotificationChannel(context: Context, channelId: String, channelName: String, importance: Int, description: String) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val mChannel = NotificationChannel(CHANNEL_ID, "Transmart", importance)
-            mChannel.description = "Exchange rate notification channel"
+            val mChannel = NotificationChannel(channelId, channelName, importance)
+            mChannel.description = description
             val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(mChannel)
         }
@@ -43,7 +48,7 @@ object NotificationUtils {
         }
         val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 
-        var builder = NotificationCompat.Builder(context, CHANNEL_ID)
+        var builder = NotificationCompat.Builder(context, CHANNEL_ID_LOW_PRICE_ALERT)
             .setSmallIcon(R.drawable.transmart_notification_large)
             .setContentTitle(title)
             .setContentText(content)
