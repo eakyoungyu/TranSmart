@@ -3,6 +3,7 @@ package com.kong.transmart.util
 import android.util.Log
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Calendar.HOUR_OF_DAY
 import java.util.Date
 import java.util.TimeZone
 
@@ -104,4 +105,16 @@ object DateUtils {
         return getDatesFromDayAfterStartToToday(startCalendar)
     }
 
+    fun calculateDelayUntil(hour: Int, minute: Int): Long {
+        val now = Calendar.getInstance(kstTimeZone)
+        val nextRun = getCleanDateCalendar(Date()).apply {
+            this.add(HOUR_OF_DAY, hour)
+            this.add(Calendar.MINUTE, minute)
+            if (before(now)) {
+                this.add(Calendar.DAY_OF_MONTH, 1)
+            }
+        }
+
+        return nextRun.timeInMillis - now.timeInMillis
+    }
 }
