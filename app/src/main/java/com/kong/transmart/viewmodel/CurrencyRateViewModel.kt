@@ -47,23 +47,16 @@ class CurrencyRateViewModel @Inject constructor(
     lateinit var getAllBanks: Flow<List<Bank>>
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            val scraper = async {
-                fetchFromWeb()
-            }
             val banks = async {
                 bankRepository.getBanks()
             }
 
             try {
                 getAllBanks = banks.await()
-                scraper.await()
             } catch (exception: Exception) {
                 Log.e(TAG, exception.message.toString())
             }
 
-
-            // TODO Remove this after implementing WorkHandler
-//            val workHandler = WorkHandler()
             workHandler.scheduleDailyWork()
         }
     }

@@ -117,4 +117,22 @@ object DateUtils {
 
         return nextRun.timeInMillis - now.timeInMillis
     }
+
+    fun isActiveTime(): Boolean {
+        val now = Calendar.getInstance(kstTimeZone)
+        // if today is weekend, return false
+        if (now.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || now.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+            return false
+        }
+
+        val start = Calendar.getInstance(kstTimeZone).apply {
+            this.set(HOUR_OF_DAY, 8)
+            this.set(Calendar.MINUTE, 0)
+        }
+        val end = Calendar.getInstance(kstTimeZone).apply {
+            this.set(HOUR_OF_DAY, 20)
+            this.set(Calendar.MINUTE, 0)
+        }
+        return now.after(start) && now.before(end)
+    }
 }
