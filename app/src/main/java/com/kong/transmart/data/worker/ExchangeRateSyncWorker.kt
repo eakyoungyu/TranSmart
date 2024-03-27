@@ -12,6 +12,8 @@ import com.kong.transmart.util.DateUtils
 import com.kong.transmart.util.NotificationUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.flow.first
+
 @HiltWorker
 class ExchangeRateSyncWorker @AssistedInject constructor(
     @Assisted val appContext: Context,
@@ -30,12 +32,26 @@ class ExchangeRateSyncWorker @AssistedInject constructor(
 
             saveDB(exchangeRateEntity)
 
+            // TODO remove this
             NotificationUtils.sendLowPriceAlertNotification(appContext, "Transmart",
                 "Scraping done ${exchangeRateEntity.rate} ${DateUtils.dateToString(exchangeRateEntity.date)}")
+
+            notifyIfWeekLowestPrice(exchangeRateEntity.rate)
 
             Result.success()
         } catch (e: Exception) {
             Result.failure()
+        }
+    }
+
+    private suspend fun notifyIfWeekLowestPrice(rate: Double) {
+        val week = exchangeRateRepository.getExchangeRatesForLastWeek().first()
+        val lowestRate = week.minOf { it.rate }
+        Log.d(TAG, "Lowest rate: $lowestRate")
+
+        if (rate == lowestRate) {
+            NotificationUtils.sendLowPriceAlertNotification(appContext, "Transmart",
+                "Lowest rate of the week: $rate")
         }
     }
 
@@ -48,6 +64,7 @@ class ExchangeRateSyncWorker @AssistedInject constructor(
         Log.d(TAG, "${output.currencyRate} ${DateUtils.dateToString(date)}")
         return exchangeRateEntity
     }
+
     private suspend fun saveDB(exchangeRateEntity: ExchangeRateEntity) {
         Log.d(TAG, "saveDB")
         exchangeRateRepository.updateOrInsertExchangeRate(exchangeRateEntity)
