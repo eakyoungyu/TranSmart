@@ -6,7 +6,6 @@ import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -34,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
@@ -44,19 +44,22 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.text.isDigitsOnly
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
-//import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
+import androidx.lifecycle.findViewTreeViewModelStoreOwner
 import com.kong.transmart.MainActivity
 import com.kong.transmart.R
-import com.kong.transmart.navigation.BottomNavigationBar
 import com.kong.transmart.util.NotificationUtils
 import com.kong.transmart.viewmodel.ChartViewModel
 import com.kong.transmart.viewmodel.CurrencyRateViewModel
 
 @Composable
 fun HomeView() {
-    val currencyRateViewModel = hiltViewModel<CurrencyRateViewModel>()
+    val composeView = LocalView.current
+    val currencyRateViewModel = composeView.findViewTreeViewModelStoreOwner()?.let {
+        hiltViewModel<CurrencyRateViewModel>(it)
+    } ?: run {
+        hiltViewModel<CurrencyRateViewModel>()
+    }
+
     val chartViewModel = hiltViewModel<ChartViewModel>()
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
@@ -81,7 +84,7 @@ fun HomeView() {
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun PermissionLauncher(context: Context) {
-    val requestPermissionLauncher = rememberLauncherForActivityResult( // 첫번째 dialog 실행
+    val requestPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
         onResult = {
                 permissions ->
