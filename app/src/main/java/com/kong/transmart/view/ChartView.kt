@@ -1,6 +1,5 @@
 package com.kong.transmart.view
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -64,7 +63,7 @@ fun SelectPeriod(viewModel: ChartViewModel) {
         Period.entries.forEach { period ->
             val isSelected = (period == viewModel.getSelectedPeriod())
             val backgroundColor = if (isSelected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary
-            val textColor = if (isSelected) MaterialTheme.colorScheme.onTertiary else MaterialTheme.colorScheme.onPrimary
+            val textColor = if (isSelected) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.onPrimary
             TextButton(
                 modifier = Modifier.weight(1f),
                 onClick = { viewModel.onPeriodSelected(period) },

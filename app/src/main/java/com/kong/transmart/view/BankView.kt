@@ -14,7 +14,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Card
 import androidx.compose.material.DismissDirection
 import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
@@ -24,7 +23,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.rememberDismissState
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.SwipeToDismiss
@@ -136,7 +134,7 @@ fun BankInputBasicTextField(textState: MutableState<String>, modifier: Modifier,
         modifier = modifier,
         decorationBox = {innerTextField ->
             if (textState.value.isEmpty())
-                Text(hint, style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSecondary), textAlign = TextAlign.Center)
+                Text(hint, style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onTertiary), textAlign = TextAlign.Center)
             innerTextField()
         },
         textStyle = MaterialTheme.typography.bodyLarge.copy(textAlign = TextAlign.Center)
