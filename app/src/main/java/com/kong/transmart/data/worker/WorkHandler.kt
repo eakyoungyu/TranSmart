@@ -2,7 +2,6 @@ package com.kong.transmart.data.worker
 
 import android.content.Context
 import android.util.Log
-import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
@@ -17,7 +16,7 @@ class WorkHandler(val context: Context) {
     private val workManager = WorkManager.getInstance(context)
 
     private fun dailySyncWork() {
-        val initialDelay = DateUtils.calculateDelayUntil(22, 0)
+            val initialDelay = DateUtils.calculateDelayUntil(8, 0)
         Log.d(TAG, "Add scheduled work: initial delay: $initialDelay")
 
         val syncRequest = PeriodicWorkRequestBuilder<ExchangeRateSyncWorker>(1, TimeUnit.DAYS)
@@ -46,7 +45,7 @@ class WorkHandler(val context: Context) {
 
         workManager.enqueueUniquePeriodicWork(
             WorkConstants.TAG_TEST,
-            ExistingPeriodicWorkPolicy.KEEP, // KEEP?
+            ExistingPeriodicWorkPolicy.KEEP,
             syncRequest
         )
     }
@@ -62,7 +61,6 @@ class WorkHandler(val context: Context) {
          dailySyncWork()
 //         testScheduler()
 
-//        val workScheduled = dataStore()
     }
 
 }
@@ -70,5 +68,4 @@ class WorkHandler(val context: Context) {
 object WorkConstants {
     const val TAG_SYNC_EXCHANGE_RATE = "TAG_SYNC_EXCHANGE_RATE"
     const val TAG_TEST = "TAG_TEST"
-    val WORK_SCHEDULED = booleanPreferencesKey("work_scheduled")
 }

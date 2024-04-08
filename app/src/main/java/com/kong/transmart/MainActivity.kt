@@ -27,10 +27,11 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private val currencyRateViewModel: CurrencyRateViewModel by viewModels()
+//    private val currencyRateViewModel: CurrencyRateViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+
             TranSmartTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -42,23 +43,24 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        fetchPeriodicallyDuringActiveTime()
+// TODO Move to viewModel or view
+//        fetchPeriodicallyDuringActiveTime()
 
     }
 
-    private fun fetchPeriodicallyDuringActiveTime() {
-        var shouldFetch = true
-
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                while (isActive && shouldFetch) {
-                    currencyRateViewModel.fetchFromWeb()
-                    delay(60000) // 1 minute
-                    shouldFetch = DateUtils.isActiveTime()
-                }
-            }
-        }
-    }
+//    private fun fetchPeriodicallyDuringActiveTime() {
+//        var shouldFetch = true
+//
+//        lifecycleScope.launch {
+//            repeatOnLifecycle(Lifecycle.State.STARTED) {
+//                while (isActive && shouldFetch) {
+//                    currencyRateViewModel.fetchFromWeb()
+//                    delay(60000) // 1 minute
+//                    shouldFetch = DateUtils.isActiveTime()
+//                }
+//            }
+//        }
+//    }
 }
 
 @HiltAndroidApp
