@@ -2,14 +2,19 @@
 TranSmart is an Android application designed to assist users in calculating the cost of money transfers from Korea to Canada.
 ## Tech Stack
 - Android Application (Kotlin, Jetpack Compose)
-- [skrape.it](https://github.com/skrapeit/skrape.it) for web scraper
 - MVVM architecture with repository pattern
-- Room database for data storage
-- Utilizes LazyColumn, Card, and SwipeToDismiss views
+- Hilt
+- Room database
+- Navigation & WebView
+- WorkManager & Notification
+- [skrape.it](https://github.com/skrapeit/skrape.it): web scraper
+- [Charts](https://github.com/dautovicharis/Charts): currency rate chart
 ## Features
-- Scrapes currency rates from the web
-- Allows users to add custom banks
-- Enables users to calculate the cost of money transfers
+- Scrape currency rates every day by using WorkManager
+- Send a notification if today is the lowest rate of the week
+- Provide web pages by using WebView
+- Allow users to add custom banks
+- Enable users to calculate the cost of money transfers
 
 ## Improved Features
 ### 1. Pre-populated Data in Database
@@ -22,5 +27,5 @@ TranSmart is an Android application designed to assist users in calculating the 
 
 
 ## Screenshots
-![TranSmart_Screenshot1_2](https://github.com/eakyoungyu/TranSmart/assets/39245582/8748380b-3152-419c-81cf-7defcc544034)
-![TranSmart_Screenshot 2_3jpg](https://github.com/eakyoungyu/TranSmart/assets/39245582/e730c15a-6335-4757-9bcc-2648ac139d56)
+![TranSmart0409_1](https://github.com/eakyoungyu/TranSmart/assets/39245582/64748626-041c-4ada-a342-36d1626e11f7)
+![TranSmart0409_2](https://github.com/eakyoungyu/TranSmart/assets/39245582/6ba11615-558a-4859-9ef9-60cd8960d54b)
