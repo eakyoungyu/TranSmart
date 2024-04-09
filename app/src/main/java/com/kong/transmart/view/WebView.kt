@@ -18,6 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.kong.transmart.viewmodel.WebViewModel
 
 sealed class WebScreen(val name: String, val url: String) {
     // TODO Move names to strings.xml
@@ -37,21 +39,22 @@ sealed class WebScreen(val name: String, val url: String) {
 
 @Composable
 fun WebView() {
+    val webViewModel = hiltViewModel<WebViewModel>()
+
     val webScreens = listOf(
         WebScreen.Naver,
         WebScreen.Moin,
         WebScreen.Wirebarley
     )
 
-    val selectedTab = remember { mutableStateOf(0) }
     Column {
         Row (
             modifier = Modifier.fillMaxWidth(),
         ) {
             webScreens.forEachIndexed {
                 index, webScreen ->
-                val backgroundColor = if (selectedTab.value == index) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
-                val textColor = if (selectedTab.value == index) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSecondary
+                val backgroundColor = if (webViewModel.getSelectedTab() == index) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
+                val textColor = if (webViewModel.getSelectedTab() == index) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSecondary
 
                 Text(
                     text = webScreen.name,
@@ -59,13 +62,13 @@ fun WebView() {
                     color = textColor,
                     modifier = Modifier
                         .weight(1f)
-                        .clickable { selectedTab.value = index }
+                        .clickable { webViewModel.setSelectedTab(index) }
                         .background(backgroundColor)
                         .padding(8.dp)
                 )
             }
         }
-        WebViewScreen(url = webScreens[selectedTab.value].url)
+        WebViewScreen(url = webScreens[webViewModel.getSelectedTab()].url)
     }
 }
 
