@@ -9,4 +9,7 @@
     <string name="period_week">1주</string>
     <string name="period_month">1달</string>
     <string name="period_year">1년</string>
+    <string name="tab_naver">네이버</string>
+    <string name="tab_moin">모인</string>
+    <string name="tab_wirebarley">와이어발리</string>
 </resources>

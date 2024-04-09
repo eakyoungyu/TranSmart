@@ -9,4 +9,7 @@
     <string name="period_week">1W</string>
     <string name="period_month">1M</string>
     <string name="period_year">1Y</string>
+    <string name="tab_naver">Naver</string>
+    <string name="tab_moin">Moin</string>
+    <string name="tab_wirebarley">Wirebarley</string>
 </resources>
