@@ -1,44 +1,81 @@
 package com.kong.transmart.view
 
-import android.util.Log
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
-@Composable
-fun WebView() {
-    WebViewScreen()
+sealed class WebScreen(val name: String, val url: String) {
+    // TODO Move names to strings.xml
+    object Naver: WebScreen(
+        name = "Naver",
+        url = "https://m.stock.naver.com/marketindex/exchange/FX_CADKRW"
+    )
+    object Moin: WebScreen(
+        name = "Moin",
+        url = "https://www.themoin.com/currency/info/cad"
+    )
+    object Wirebarley: WebScreen(
+        name = "Wirebarley",
+        url = "https://www.wirebarley.com/"
+    )
 }
 
 @Composable
-fun WebViewScreen() {
+fun WebView() {
+    val webScreens = listOf(
+        WebScreen.Naver,
+        WebScreen.Moin,
+        WebScreen.Wirebarley
+    )
 
+    val selectedTab = remember { mutableStateOf(0) }
+    Column {
+        Row (
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            webScreens.forEachIndexed {
+                index, webScreen ->
+                val backgroundColor = if (selectedTab.value == index) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
+                val textColor = if (selectedTab.value == index) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSecondary
+
+                Text(
+                    text = webScreen.name,
+                    textAlign = TextAlign.Center,
+                    color = textColor,
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable { selectedTab.value = index }
+                        .background(backgroundColor)
+                        .padding(8.dp)
+                )
+            }
+        }
+        WebViewScreen(url = webScreens[selectedTab.value].url)
+    }
+}
+
+@Composable
+fun WebViewScreen(url: String) {
     AndroidView(
         factory = { context ->
             WebView(context).apply {
                 settings.javaScriptEnabled = true
                 webViewClient = WebViewClient()
-
-                webViewClient = object : WebViewClient() {
-                    override fun onPageFinished(view: WebView?, url: String?) {
-                        super.onPageFinished(view, url)
-                        GlobalScope.launch(Dispatchers.Main) {
-                            delay(10000) // 10 seconds
-
-                            view?.evaluateJavascript(
-                                "document.documentElement.outerHTML"
-                            ) { html ->
-                                Log.d("WebViewHTML", html ?: "HTML content not found")
-                            }
-                        }
-                    }
-                }
 
                 settings.loadWithOverviewMode = true
                 settings.useWideViewPort = true
@@ -48,12 +85,7 @@ fun WebViewScreen() {
             }
         },
         update = { webView ->
-            // https://www.themoin.com/currency/info/cad
-            // client side exception - https://www.wirebarley.com/
-            webView.loadUrl("https://www.wirebarley.com/")
-
+            webView.loadUrl(url)
         },
-
-
-        )
+    )
 }
